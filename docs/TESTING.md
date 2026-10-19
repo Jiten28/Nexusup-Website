@@ -1,3 +1,5 @@
+> **Historical baseline document.** This describes the previous demo. For this incremental enhancement, use `ENHANCEMENT_REPORT.md`, `INTEGRATIONS.md` and `enhancement/` test evidence.
+
 # Testing record — 18 October 2026
 
 ## Automated Django suite: PASS

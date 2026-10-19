@@ -3,9 +3,11 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from news import views
+from news import views,api
 from news.feeds import LatestFeed,ArticleSitemap
 urlpatterns = [
+    path('api/currency/',api.currency), path('api/cities/',api.cities), path('api/weather/',api.weather),
+    path('api/languages/',api.languages), path('api/translate/',api.translate),
     path('',views.home,name='home'), path('stories/',views.listing,name='stories'),
     path('search/',views.listing,name='search'), path('category/<slug:slug>/',views.listing,name='category'),
     path('story/<slug:slug>/',views.article,name='article'), path('contact/',views.contact,name='contact'),

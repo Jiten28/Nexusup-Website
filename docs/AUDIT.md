@@ -1,3 +1,5 @@
+> **Historical baseline document.** This describes the previous demo. For this incremental enhancement, use `ENHANCEMENT_REPORT.md`, `INTEGRATIONS.md` and `enhancement/` test evidence.
+
 # NexusUp reference audit — before implementation
 
 Audit date: 18 October 2026. Scope: uploaded NexusUp_Redesign.zip and a read-only retrieval of https://nexusup.in/. No production logins, writes, database connections, service calls or deployment were performed.

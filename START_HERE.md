@@ -1,9 +1,9 @@
-# NexusUp handoff
+# NexusUp enhancement handoff
 
-1. Read **docs/AUDIT.md** — archive access, verified source features, assumptions and scope limits.
-2. Read **README.md** — install and run the separate Django sample demo locally.
-3. Review **docs/IMPLEMENTATION.md** and **docs/previews/** — architecture, routes, completed behavior and visual references.
-4. Review **docs/TESTING.md** — actual results and untested production boundaries.
-5. Use **docs/MIGRATION_PLAN.md** to prepare the future real-data migration. No database migration has occurred.
+1. Read **docs/ENHANCEMENT_REPORT.md** for the result, actual tests and remaining limits.
+2. Follow **README.md** to run the enhanced existing Django demo.
+3. Read **docs/INTEGRATIONS.md** before activating feeds, weather/currency or translation.
+4. Review **docs/enhancement/** for test logs and desktop/mobile/palette/widget previews.
+5. Original source is in **recovery/**; **docs/FILE_CHANGES.md** lists the delta. Never replace your production DB with the demo database.
 
-The full source archive is not repeated here; seven selected images and the verified logo are bundled. Keep your original WordPress ZIP unchanged. Do not deploy or connect production services without separate explicit approval.
+No live deployment, paid service purchase, active scheduler or production content migration has occurred. The sample news remains illustrative, not factual current reporting.

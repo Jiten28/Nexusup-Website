@@ -53,3 +53,11 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = False
+
+# External integrations are explicitly opt-in; no outbound request occurs on homepage render.
+NEWS_FETCH_ENABLED = os.getenv('NEWS_FETCH_ENABLED','0') == '1'
+UTILITIES_NETWORK_ENABLED = os.getenv('UTILITIES_NETWORK_ENABLED','0') == '1'
+OPEN_METEO_API_KEY = os.getenv('OPEN_METEO_API_KEY','')
+TRANSLATION_PROVIDER = os.getenv('TRANSLATION_PROVIDER','disabled')
+TRANSLATION_API_KEY = os.getenv('TRANSLATION_API_KEY','')
+LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','https://libretranslate.com').rstrip('/')

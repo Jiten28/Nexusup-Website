@@ -1,0 +1,4 @@
+# Example only. NOT installed. Replace paths and user, provision private environment file.
+# This job only contacts sources after NEWS_FETCH_ENABLED=1 and admin rights/enabled gates.
+# Environment file must be trusted and readable only by the service account.
+*/5 * * * * cd /srv/nexusup && /usr/bin/flock -n /srv/nexusup/fetch-news.lock /bin/sh -c 'set -a; . /etc/nexusup/news.env; set +a; .venv/bin/python manage.py fetch_news' >> /var/log/nexusup-news-fetch.log 2>&1

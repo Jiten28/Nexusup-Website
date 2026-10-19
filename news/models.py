@@ -18,10 +18,55 @@ class PublishedQuerySet(models.QuerySet):
     def published(self):
         return self.filter(status='published', published_at__lte=timezone.now())
 
+class NewsSource(models.Model):
+    name = models.CharField(max_length=100)
+    feed_url = models.URLField(max_length=500)
+    adapter = models.CharField(max_length=30, default='rss', help_text='Registered server-side adapter name, not executable code.')
+    enabled = models.BooleanField(default=False)
+    rights_confirmed = models.BooleanField(default=False)
+    terms_url = models.URLField(blank=True)
+    reuse_notes = models.TextField(blank=True)
+    default_category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category_map = models.JSONField(default=dict, blank=True, help_text='Provider category name to existing category slug.')
+    allow_images = models.BooleanField(default=False)
+    image_hosts = models.JSONField(default=list, blank=True, help_text='Explicit approved image hostnames; permission still required.')
+    auto_publish = models.BooleanField(default=False, help_text='Default is editorial review. Imports never become featured automatically.')
+    interval_minutes = models.PositiveIntegerField(default=30)
+    next_fetch_at = models.DateTimeField(null=True, blank=True)
+    last_attempt_at = models.DateTimeField(null=True, blank=True)
+    last_success_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.CharField(max_length=300, blank=True)
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not isinstance(self.category_map,dict) or any(not isinstance(k,str) or not isinstance(v,str) for k,v in self.category_map.items()):
+            raise ValidationError({'category_map':'Use an object mapping feed category names to category slugs.'})
+        if not isinstance(self.image_hosts,list) or any(not isinstance(h,str) or not h or '/' in h or ':' in h for h in self.image_hosts):
+            raise ValidationError({'image_hosts':'Use a list of approved hostnames, without scheme or path.'})
+        if self.interval_minutes<5:
+            raise ValidationError({'interval_minutes':'Minimum interval is five minutes.'})
+    def __str__(self): return self.name
+
+class FetchRun(models.Model):
+    source = models.ForeignKey(NewsSource, on_delete=models.CASCADE)
+    started_at = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)
+    imported = models.PositiveIntegerField(default=0)
+    skipped = models.PositiveIntegerField(default=0)
+    error = models.CharField(max_length=300, blank=True)
+    class Meta: ordering = ['-started_at']
+
 class Article(models.Model):
     class Status(models.TextChoices):
         DRAFT = 'draft', 'Draft'
         PUBLISHED = 'published', 'Published'
+    source = models.ForeignKey(NewsSource, null=True, blank=True, on_delete=models.SET_NULL)
+    canonical_source_url = models.URLField(max_length=1000, blank=True)
+    source_url_hash = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    source_guid = models.CharField(max_length=255, blank=True)
+    source_published_at = models.DateTimeField(null=True, blank=True)
+    imported_at = models.DateTimeField(null=True, blank=True)
+    remote_image_url = models.URLField(max_length=1000, blank=True)
+    breaking_until = models.DateTimeField(null=True, blank=True, help_text='Editorially verified breaking status expires automatically; samples never qualify.')
     title = models.CharField(max_length=220)
     slug = models.SlugField(max_length=240, unique=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
@@ -44,6 +89,16 @@ class Article(models.Model):
         indexes = [models.Index(fields=['status','published_at'])]
     def __str__(self): return self.title
     def get_absolute_url(self): return reverse('article', args=[self.slug])
+    @property
+    def image_src(self):
+        from django.conf import settings
+        return settings.MEDIA_URL + self.image_path if self.image_path else self.remote_image_url
+    @property
+    def source_label(self):
+        return self.source.name if self.source_id else (self.author.get_full_name() or self.author.username)
+    @property
+    def display_date(self):
+        return self.source_published_at if self.imported_at else self.published_at
     @property
     def reading_minutes(self): return max(1, (len(self.body.split()) + 199) // 200)
     @property

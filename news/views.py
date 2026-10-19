@@ -10,12 +10,17 @@ from .models import Article, Category
 from .forms import CommentForm, ContactForm
 
 def published():
-    return Article.objects.published().select_related('category','author')
+    return Article.objects.published().select_related('category','author','source')
 
 def home(request):
     posts = published()
     hero = posts.filter(featured=True).first() or posts.first()
-    return render(request,'news/home.html',{'hero':hero,'highlights':posts.exclude(pk=hero.pk)[:3] if hero else [],'latest':posts[:6],'picks':posts.filter(featured=True)[:3]})
+    supporting = list(posts.exclude(pk=hero.pk)[:4]) if hero else []
+    animated = list(posts.exclude(image_path='',remote_image_url='')[:6])
+    breaking = posts.filter(is_sample=False,breaking_until__gt=__import__('django').utils.timezone.now())[:3]
+    return render(request,'news/home.html',{'hero':hero,'left_stories':supporting[:2],'right_stories':supporting[2:],
+        'slides':animated,'headlines':posts[:10],'breaking':breaking,'latest':posts[:12],'picks':posts.filter(featured=True)[:3]})
+
 
 def listing(request, slug=None):
     category = get_object_or_404(Category,slug=slug) if slug else None
@@ -56,7 +61,7 @@ def contact(request):
 def info(request,slug):
     pages = {
         'about':('A clearer view of what matters.','NexusUp is being reimagined as an accessible, independent-feeling editorial experience. This is a separate local redesign demo, not the live publication. Every seeded story is sample content, not verified reporting.'),
-        'privacy':('Demo privacy notice','This local demo stores submitted comments, contact names, email addresses and messages in its demo database. Do not enter sensitive or real personal information. Bookmarks and theme preferences are stored in this browser. A session cookie supports forms and the admin. No analytics, advertising trackers, translation requests or outbound email are enabled. Clear demo.sqlite3 and browser storage to reset. This notice is not a production privacy policy.'),
+        'privacy':('Demo privacy notice','This local demo stores submitted comments, contact names, email addresses and messages in its demo database. Do not enter sensitive or real personal information. Bookmarks and theme preferences are stored in this browser. A session cookie supports forms and the admin. No analytics, advertising trackers or outbound email are enabled. Optional weather/currency services receive requests only when used; a configured translation service receives public article text after language selection. Selected locations and appearance preferences may be stored in this browser. No external providers are enabled by default. Clear demo.sqlite3 and browser storage to reset. This notice is not a production privacy policy.'),
         'terms':('Demo terms & editorial note','Sample articles demonstrate layout and workflow only. They are not factual news, financial advice or match predictions. Supplied images are local reference assets whose ownership and publication rights remain unverified. Production editorial, rights, accessibility and legal review are required before launch.'),
     }
     if slug not in pages: raise Http404

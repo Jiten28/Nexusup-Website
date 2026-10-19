@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://nexusup.in/wp-content/themes/digital-newspaper/assets/js/theme.js?ver=1.1.18",
+    "bytes": 21150,
+    "matches_archived_text": true,
+    "sha256": "d06dc8906f46006de556241c99293c58a1c9b61dc9c7e7fd460110eeacee9f12"
+  },
+  {
+    "url": "https://nexusup.in/wp-content/themes/digital-newspaper/assets/lib/js-marquee/jquery.marquee.min.js?ver=1.6.0",
+    "bytes": 9029,
+    "matches_archived_text": true,
+    "sha256": "feade23a47f6041e6d1008885642dd7ab7cc4f12d94b0c7191c9cf8ca55df97d"
+  }
+]

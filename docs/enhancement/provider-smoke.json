@@ -1,0 +1,58 @@
+{
+  "currency": {
+    "pass": true,
+    "result": {
+      "rate": 0.01053,
+      "date": "2026-10-19",
+      "source": "Frankfurter \u2014 daily blended reference rate; not a live quote"
+    }
+  },
+  "city": {
+    "pass": true,
+    "result": [
+      {
+        "name": "Hyderabad, Telangana, India",
+        "latitude": 17.38405,
+        "longitude": 78.45636
+      },
+      {
+        "name": "Hyder\u0101b\u0101d, Sindh, Pakistan",
+        "latitude": 25.39689,
+        "longitude": 68.37718
+      },
+      {
+        "name": "Hyderabad, Punjab, Pakistan",
+        "latitude": 31.34602,
+        "longitude": 71.69621
+      },
+      {
+        "name": "Hyderabad, Sindh, Pakistan",
+        "latitude": 25.5,
+        "longitude": 69.59444
+      },
+      {
+        "name": "Hyderabad, Punjab, Pakistan",
+        "latitude": 29.78445,
+        "longitude": 71.89209
+      }
+    ]
+  },
+  "weather": {
+    "pass": true,
+    "result": {
+      "temperature": 31.1,
+      "weather_code": 2,
+      "wind": 7.8,
+      "time": "2026-10-19T05:45Z",
+      "source": "Open-Meteo (CC BY 4.0)",
+      "attribution_url": "https://open-meteo.com/",
+      "units": "\u00b0C / km/h"
+    }
+  },
+  "rss_parse_only": {
+    "pass": true,
+    "result": {
+      "entries": 19
+    }
+  }
+}

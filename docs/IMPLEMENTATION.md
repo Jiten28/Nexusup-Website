@@ -1,3 +1,5 @@
+> **Historical baseline document.** This describes the previous demo. For this incremental enhancement, use `ENHANCEMENT_REPORT.md`, `INTEGRATIONS.md` and `enhancement/` test evidence.
+
 # Implementation handoff
 
 ## Architecture

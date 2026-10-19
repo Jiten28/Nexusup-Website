@@ -1,0 +1,62 @@
+{
+  "longHeadlineFit": true,
+  "widgetPaletteStates": [
+    {
+      "mode": "light",
+      "pal": "ocean",
+      "button": "rgb(21, 80, 198)",
+      "accent": "rgb(21, 80, 198)",
+      "background": "rgb(255, 255, 255)"
+    },
+    {
+      "mode": "light",
+      "pal": "violet",
+      "button": "rgb(104, 51, 174)",
+      "accent": "rgb(104, 51, 174)",
+      "background": "rgb(255, 255, 255)"
+    },
+    {
+      "mode": "light",
+      "pal": "emerald",
+      "button": "rgb(8, 112, 76)",
+      "accent": "rgb(8, 112, 76)",
+      "background": "rgb(255, 255, 255)"
+    },
+    {
+      "mode": "light",
+      "pal": "sunset",
+      "button": "rgb(170, 62, 26)",
+      "accent": "rgb(170, 62, 26)",
+      "background": "rgb(255, 255, 255)"
+    },
+    {
+      "mode": "dark",
+      "pal": "ocean",
+      "button": "rgb(145, 189, 255)",
+      "accent": "rgb(145, 189, 255)",
+      "background": "rgb(18, 34, 57)"
+    },
+    {
+      "mode": "dark",
+      "pal": "violet",
+      "button": "rgb(207, 171, 255)",
+      "accent": "rgb(207, 171, 255)",
+      "background": "rgb(18, 34, 57)"
+    },
+    {
+      "mode": "dark",
+      "pal": "emerald",
+      "button": "rgb(118, 223, 182)",
+      "accent": "rgb(118, 223, 182)",
+      "background": "rgb(18, 34, 57)"
+    },
+    {
+      "mode": "dark",
+      "pal": "sunset",
+      "button": "rgb(255, 180, 148)",
+      "accent": "rgb(255, 180, 148)",
+      "background": "rgb(18, 34, 57)"
+    }
+  ],
+  "pass": true
+}
