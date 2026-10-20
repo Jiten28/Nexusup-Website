@@ -1,0 +1,147 @@
+{
+  "results": [
+    {
+      "test": "responsive-home",
+      "width": 360,
+      "overflow": false,
+      "gridColumns": 1
+    },
+    {
+      "test": "responsive-home",
+      "width": 390,
+      "overflow": false,
+      "gridColumns": 1
+    },
+    {
+      "test": "responsive-home",
+      "width": 768,
+      "overflow": false,
+      "gridColumns": 2
+    },
+    {
+      "test": "responsive-home",
+      "width": 1024,
+      "overflow": false,
+      "gridColumns": 3
+    },
+    {
+      "test": "responsive-home",
+      "width": 1440,
+      "overflow": false,
+      "gridColumns": 4
+    },
+    {
+      "test": "theme-palette",
+      "mode": "light",
+      "palette": "ocean"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "light",
+      "palette": "violet"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "light",
+      "palette": "emerald"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "light",
+      "palette": "sunset"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "dark",
+      "palette": "ocean"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "dark",
+      "palette": "violet"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "dark",
+      "palette": "emerald"
+    },
+    {
+      "test": "theme-palette",
+      "mode": "dark",
+      "palette": "sunset"
+    },
+    {
+      "test": "widget",
+      "key": "calculator"
+    },
+    {
+      "test": "widget",
+      "key": "currency"
+    },
+    {
+      "test": "widget",
+      "key": "weather"
+    },
+    {
+      "test": "widget",
+      "key": "clock"
+    },
+    {
+      "test": "widget",
+      "key": "calendar"
+    },
+    {
+      "test": "widget",
+      "key": "units"
+    },
+    {
+      "test": "translation-disabled",
+      "pass": true
+    },
+    {
+      "test": "carousel-reduced-motion",
+      "pass": true
+    },
+    {
+      "test": "article-direct-refresh-save",
+      "pass": true
+    },
+    {
+      "test": "footer-route",
+      "path": "about"
+    },
+    {
+      "test": "footer-route",
+      "path": "privacy"
+    },
+    {
+      "test": "footer-route",
+      "path": "terms"
+    },
+    {
+      "test": "footer-route",
+      "path": "sources"
+    },
+    {
+      "test": "footer-route",
+      "path": "contact"
+    },
+    {
+      "test": "contact-csrf-submit",
+      "pass": true
+    },
+    {
+      "test": "load-more-dedup-fixture",
+      "pass": true
+    },
+    {
+      "test": "empty-fixture",
+      "pass": true
+    },
+    {
+      "test": "error-fixture",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

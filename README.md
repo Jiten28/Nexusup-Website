@@ -1,57 +1,257 @@
-# NexusUp — incremental Django magazine enhancement
+# NexusUp — Portable React + Django News Portal
 
-This package enhances the working Django demo supplied as **NexusUp_Django_Demo.zip**, not a replacement Django application. The live WordPress site has not been changed. Existing routes, data, manual publishing, media paths and original features remain. The ten supplied stories are still clearly labeled illustrative samples, not current reporting. No production data was supplied/imported.
+An incremental migration of the supplied Django application, not a new content dataset.
 
-Start with **docs/ENHANCEMENT_REPORT.md** for implemented features, file changes, executed tests and limitations; **docs/INTEGRATIONS.md** for activation, licensing and scheduler setup. `docs/PRE_EDIT_AUDIT.md` records the audit/plan and original animation source findings before implementation. The original source ZIP and its checksum are included under `recovery/` in the delivery.
+## 1. Project Overview
 
-## Run locally (Python 3.10+; tested on Python 3.13)
+### Public frontend
 
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r requirements.txt
+- React + Vite.
+- One horizontal image carousel.
+- Centered editorial feature and responsive news grid.
+- Controlled **Load More** functionality.
+- Four independent color palettes with light/dark modes.
+- Existing utilities retained.
+
+### Backend
+
+- Django 5.2 + Django REST Framework (DRF).
+- Existing Django app label, database tables, editorial workflow, forms, admin, and routes preserved.
+- SQLite development records and all seven supplied media files retained.
+- No automatic database reseeding.
+
+### Production
+
+- MariaDB + Gunicorn + persistent media storage.
+- Independent scheduler for background ingestion.
+- Frontend deployable to any compatible static hosting provider.
+- Netlify is optional, not required.
+
+### News ingestion
+
+- Rights-gated RSS/Atom ingestion.
+- Optional NewsAPI metadata adapter.
+- Separate source-trust and auto-publication flags.
+- Review-by-default workflow.
+- Canonical URL, title, and provider-ID deduplication.
+- Fetch logs for monitoring ingestion attempts.
+
+## 2. Prerequisites
+
+Recommended versions:
+
+- Python 3.12 or 3.13.
+- Node.js 22 or later.
+- npm, included with Node.js.
+- Git, if you are cloning the project repository.
+
+Install Python and Node.js using their official websites:
+
+- Python: https://www.python.org/downloads/
+- Node.js: https://nodejs.org/en/download/
+- Git: https://git-scm.com/downloads
+
+After installation, open a new terminal and verify the installations.
+
+**Windows — PowerShell**
+
+```powershell
+py --version
+node --version
+npm --version
+git --version
+```
+
+**macOS — Terminal**
+
+```bash
+python3 --version
+node --version
+npm --version
+git --version
+```
+
+If Git is not needed because the project folder is already available, you can skip checking Git.
+
+## 3. Local Development — Windows
+
+Use two separate PowerShell terminals: one for Django and one for React.
+
+### Terminal 1 — Django backend
+
+Open PowerShell in the NexusUp project folder and run:
+
+```powershell
+cd backend
+
+py -m venv .venv
+
+.\.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+Copy-Item .env.example .env
+```
+
+Review `backend/.env` and configure the settings appropriate for your local environment. The `.env.example` file is a template and is not loaded automatically.
+
+If you do not want to create a local `.env` file yet, skip the `Copy-Item` command and configure the environment variables explicitly instead.
+
+Enable Django development mode in the current PowerShell session:
+
+```powershell
+$env:DJANGO_DEBUG = "1"
+```
+
+Apply database migrations and start Django:
+
+```powershell
 python manage.py migrate
-python manage.py configure_sources
 python manage.py runserver 127.0.0.1:8000
 ```
 
-Open `http://127.0.0.1:8000/` on that computer. The bundled SQLite database contains the original ten samples plus additive source/category tables/configuration. **Do not overwrite your own database with it.** If installing without the demo database, `python manage.py seed_demo` creates illustrative samples (optional, never required on a real editorial database). It does not import production content. Windows: `py -m venv .venv`, then `.venv\Scripts\activate` and the same Python commands.
+The backend should now be available at:
 
-```sh
-python manage.py createsuperuser
+`http://127.0.0.1:8000/`
+
+**If PowerShell blocks virtual-environment activation**, run this in the same terminal and try activation again:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
 ```
 
-Choose credentials interactively, then open `/admin/`. No usable administrator credentials ship with this package. Draft/future articles stay private. Admin supports manual articles, categories, featured selection, source/review management, scheduled publication timestamps, comments and contact submissions. Contacts are saved locally, not emailed.
+This changes the execution policy for the current PowerShell process only.
 
-## Included
+### Terminal 2 — React frontend
 
-- Blue magazine design, a large center feature/two stories each side, responsive lower grid (4/3/2/1 columns as space allows), refined article/archive/search/forms/footer.
-- Independent persistent Light/Dark and four-palette Color Theme controls; system preference when no appearance is stored.
-- Separate image-based vertical headline slider and continuously left-scrolling Headlines strip, adapted from audited original WordPress behavior; actual story images, clickable headlines/source metadata, controls, pause/focus/hover and reduced-motion alternatives.
-- Header local date/time, language control, location action, Widgets dropdown: calculator, currency, weather, world clock, calendar, unit converter.
-- Opt-in, server-side scheduled RSS/Atom ingestion, URL dedup, source/category mapping, draft review, permitted image URLs, status/error tracking, safe fallbacks. API-adapter registry is extensible; no paid news API is configured.
-- Opt-in Google Cloud / LibreTranslate adapters, no frontend secrets and no arbitrary markup replacement. Translation is partial localization; see integration limits.
-- Existing article/related stories, search/category pagination, reading times, browser-local saves, copy link, form validation/moderation, RSS/sitemap, canonical/Open Graph, CSRF and dated media paths retained.
+Open a second PowerShell terminal in the project folder:
 
-## Test
+```powershell
+cd frontend
 
-```sh
-python manage.py check
-python manage.py makemigrations --check --dry-run
-python manage.py test -v 2
-# Optional browser tests; install Playwright separately and supply local Chromium path if necessary:
-npm install --no-save playwright
-CHROMIUM_PATH=/path/to/chromium QA_OUT=/tmp/nexusup-qa node scripts/enhancement_qa.cjs
+npm ci
+npm run dev
 ```
 
-Browser suite requires the local sample-only server already running. It uses fixtures for paid-provider success paths and real disabled-provider error states. It does not contact external providers or submit real personal information. Actual logs and preview screenshots are included under `docs/enhancement/`.
+Open the Vite URL printed in the terminal, commonly:
 
-## Boundaries and safe rollout
+`http://localhost:5173/`
 
-- External feeds, currency/weather and translation are disabled by default. `configure_sources` adds only **disabled** source candidates. Scheduler example is not installed. Review rights, consent, service licensing, credentials, quotas and logs before enabling. `.env.example` lists variables; export them explicitly (no dotenv auto-loader).
-- Original WordPress JS/PHP libraries were inspected, not copied into Django. Available Django baseline contained neither news animation; these are source-informed accessible adaptations, not a claim that previously absent Django animation code was preserved byte-for-byte.
-- Production MariaDB, WSGI/reverse proxy, SMTP, actual content migration, legal policy/rights clearance, full assistive-technology/RTL testing, load/penetration tests and production monitoring remain unverified. See historical `docs/MIGRATION_PLAN.md` for real-data migration gates. Never apply Django migrations to the WordPress database.
-- Production uses a separately provisioned MariaDB database, `requirements-production.txt`, private environment secrets, approved HTTPS `SITE_URL`, `DB_ENGINE=mariadb` and `DJANGO_DEBUG=0`. Settings fail closed without these. Current cache/rate limits are demo-only, per-process; install shared production controls before exposing provider endpoints.
-- Demo stays `noindex,nofollow`; ads disabled; no analytics/tracking or outbound email is enabled. Sample policies are not legal sign-off. Supplied reference images/logo need publication-rights review. No live deployment or source-rights approval is implied.
+The Vite development proxy should forward `/api` and `/media` requests to Django.
 
-The original source is recoverable; no original project files were removed. `docs/FILE_CHANGES.md` lists the exact delta.
+Keep both terminals running while developing.
+
+## 4. Local Development — macOS
+
+Use two separate Terminal windows or tabs: one for Django and one for React.
+
+### Terminal 1 — Django backend
+
+From the NexusUp project folder, run:
+
+```bash
+cd backend
+
+python3 -m venv .venv
+
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+cp .env.example .env
+```
+
+Review `backend/.env` and configure the appropriate local settings. The `.env.example` file is a template and is not loaded automatically.
+
+If you prefer to configure environment variables directly, skip the `cp` command.
+
+Enable Django development mode in the current terminal:
+
+```bash
+export DJANGO_DEBUG=1
+```
+
+Apply migrations and start Django:
+
+```bash
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
+```
+
+The backend should now be available at:
+
+`http://127.0.0.1:8000/`
+
+### Terminal 2 — React frontend
+
+Open a second Terminal window or tab in the project folder:
+
+```bash
+cd frontend
+
+npm ci
+npm run dev
+```
+
+Open the Vite URL printed in the terminal, commonly:
+
+`http://localhost:5173/`
+
+The Vite development proxy should forward `/api` and `/media` requests to Django.
+
+Keep both terminals running while developing.
+
+## 5. Database and Media Preservation
+
+The supplied SQLite database and media files must remain intact throughout local development.
+
+- Do not run seed scripts, fixture imports, or database reset commands unless explicitly intended.
+- `python manage.py migrate` applies pending migrations; it does not automatically reseed the database.
+- Back up the SQLite database and media directory before schema changes.
+- Verify the configured SQLite database path before running migrations.
+- Preserve the existing Django app label, table names, editorial records, forms, admin, and routes.
+- Confirm the presence of all seven supplied media files.
+- Do not publish reference media until usage rights are confirmed.
+
+For production, follow the database backup and restore procedures before migrating from SQLite to MariaDB.
+
+## 6. Handover Documents
+
+- `docs/AUDIT.md` — original Stage 1 findings; historical reference.
+- `docs/HANDOVER.md` — completed work, feature checklist, verification results, and remaining blockers.
+- `docs/DEPLOYMENT.md` — provider-neutral Python/VPS and optional Compose deployments, allowed origins, static/media handling, scheduler, rollback, and Netlify troubleshooting.
+- `database/README.md` — MariaDB setup.
+- `database/backup-restore.md` — database preservation and restoration procedure.
+- `docs/FILE_CHANGES.md` — file-level changes.
+- `docs/file-manifest.json` — before/after file trees and exact file actions.
+- `docs/verification/` — executed test evidence.
+- `docs/archive/` — historical reports that are not current acceptance results.
+
+## 7. Production Readiness and Launch Gates
+
+The following must not be treated as completed without verification:
+
+- Production deployment, DNS changes, paid account activation, and a live MariaDB connection.
+- Production environment variables, secrets, and allowed-origin configuration.
+- Persistent media storage and a tested backup/restore process.
+- Independent scheduler deployment and monitoring.
+- Provider integrations, which ship disabled.
+- Sample stories, which remain labeled.
+- Editorial and legal approval of content and media rights.
+- Production `robots.txt`, indexing policy, and removal of preview-only `noindex` directives when appropriate.
+
+The preview is intentionally configured as noindex. Confirm the final production indexing policy before launch.
+
+## 8. Important Notes
+
+- Use the React/Vite URL for the public frontend preview, not Django's fallback homepage.
+- Django's fallback homepage remains available for legacy compatibility.
+- Use the same Python version and compatible dependencies across development and deployment.
+- Keep credentials out of source control. Ensure `.env` files are excluded from Git.
+- Do not assume that a successful local run proves production readiness.
+- Check `docs/HANDOVER.md` and `docs/verification/` for the actual state of completed work and outstanding issues.
+
+**Local development is ready to begin once dependencies are installed and the existing database, environment configuration, and media paths have been verified.**

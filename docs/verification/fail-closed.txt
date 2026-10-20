@@ -1,0 +1,1 @@
+Missing production secret: startup rejected as expected

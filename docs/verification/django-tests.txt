@@ -1,0 +1,64 @@
+Creating test database for alias 'default'...
+........Forbidden (CSRF cookie not set.): /contact/
+Forbidden (CSRF cookie not set.): /contact/
+Forbidden (CSRF cookie not set.): /story/beyond-the-boundary-a-fresh-lens-on-the-game/
+Forbidden (CSRF cookie not set.): /story/beyond-the-boundary-a-fresh-lens-on-the-game/
+.Not Found: /story/beyond-the-boundary-a-fresh-lens-on-the-game/
+Not Found: /story/beyond-the-boundary-a-fresh-lens-on-the-game/
+Not Found: /story/the-next-chapter-starts-with-a-different-question/
+Not Found: /story/the-next-chapter-starts-with-a-different-question/
+...........Not Found: /story/missing/
+Not Found: /story/missing/
+Not Found: /category/missing/
+Not Found: /category/missing/
+.......Service Unavailable: /api/currency/
+Service Unavailable: /api/currency/
+Service Unavailable: /api/weather/
+Service Unavailable: /api/weather/
+Service Unavailable: /api/cities/
+Service Unavailable: /api/cities/
+Service Unavailable: /api/languages/
+Service Unavailable: /api/languages/
+.............Too Many Requests: /api/translate/
+Too Many Requests: /api/translate/
+.Forbidden (CSRF cookie not set.): /api/translate/
+Forbidden (CSRF cookie not set.): /api/translate/
+...Forbidden (CSRF cookie not set.): /api/contact/
+Forbidden (CSRF cookie not set.): /api/contact/
+Too Many Requests: /api/contact/
+Too Many Requests: /api/contact/
+..Service Unavailable: /health/ready/
+Service Unavailable: /health/ready/
+..Bad Request: /api/contact/
+Bad Request: /api/contact/
+Bad Request: /api/contact/
+Bad Request: /api/contact/
+..Not Found: /api/articles/
+Not Found: /api/articles/
+.Not Found: /api/articles/beyond-the-boundary-a-fresh-lens-on-the-game/
+Not Found: /api/articles/beyond-the-boundary-a-fresh-lens-on-the-game/
+Not Found: /api/articles/beyond-the-boundary-a-fresh-lens-on-the-game/
+Not Found: /api/articles/beyond-the-boundary-a-fresh-lens-on-the-game/
+.Method Not Allowed: /api/articles/
+Method Not Allowed: /api/articles/
+Method Not Allowed: /api/categories/
+Method Not Allowed: /api/categories/
+Method Not Allowed: /api/tags/
+Method Not Allowed: /api/tags/
+..Forbidden (Origin checking failed - https://untrusted.example does not match any trusted origins.): /api/contact/
+Forbidden (Origin checking failed - https://untrusted.example does not match any trusted origins.): /api/contact/
+.........
+----------------------------------------------------------------------
+Ran 63 tests in 0.778s
+
+OK
+Destroying test database for alias 'default'...
+Found 63 test(s).
+System check identified no issues (0 silenced).
+Sample content ready. No production data was imported.
+Sample content ready. No production data was imported.
+Sample content ready. No production data was imported.
+Missing categories/source candidates added; feeds disabled, no articles fetched.
+Missing categories/source candidates added; feeds disabled, no articles fetched.
+Sample content ready. No production data was imported.
+Sample content ready. No production data was imported.

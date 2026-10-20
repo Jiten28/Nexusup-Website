@@ -1,9 +1,17 @@
-.venv/
-venv/
-__pycache__/
-*.pyc
 .env
-*.sqlite3
-staticfiles/
-media/restored-media-manifest.json
+.env.*
+!.env.example
+!.env.production.example
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.venv/
 node_modules/
+dist/
+staticfiles/
+*.log
+*.sqlite3
+!backend/demo.sqlite3
+# Keep supplied reference media; ignore new private runtime uploads via deployment storage.
+coverage/

@@ -1,0 +1,9 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+*.sqlite3
+staticfiles/
+media/restored-media-manifest.json
+node_modules/

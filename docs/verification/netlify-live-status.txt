@@ -1,0 +1,5 @@
+Read-only check: https://nexusup.netlify.app/
+Observed during this implementation session: HTTP 404; response title/h1 "Page not found".
+No deploy, site configuration, repository or DNS changes were made remotely.
+Netlify deploy logs, configured publish directory and deployed repository revision were unavailable.
+Local Vite build/publish output verified separately; this is NOT a verified live fix.
