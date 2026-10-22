@@ -1,0 +1,30 @@
+{
+  "snapshot": "NexusUp working-tree source export",
+  "frontend_package_version": "1.0.0",
+  "base_commit": "b91202bdef8bbcf066dc497710f38eef84f598f5",
+  "branch": "master",
+  "created_utc": "2026-10-22T06:26:32.673398+00:00",
+  "source_root": "/data/NexusUp",
+  "windows_active_copy_matched": false,
+  "unimplemented_pending_fixes": [
+    "ingestion service gate and accounting",
+    "admin manual fetch action",
+    "compact auto-start carousel"
+  ],
+  "source_files_byte_identical": true,
+  "database_representation": "rebuilt sample SQLite snapshot; all logical table records identical",
+  "database_logical_sha256": "c3474b8fbb24c1f456d8c7a2d9c383b779f882b788d968ee656be170e6447d57",
+  "database_security_counts": {
+    "usable_passwords": 0,
+    "private_user_fields": 0,
+    "active_users": 0,
+    "sessions": 0,
+    "contacts": 0,
+    "comments": 0,
+    "admin_logs": 0,
+    "non_sample_articles": 0
+  },
+  "application_tests_run_for_export": false,
+  "live_http_requests_for_export": false,
+  "original_database_modified": false
+}

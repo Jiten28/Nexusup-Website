@@ -1,0 +1,1994 @@
+{
+  "base_commit": "b91202bdef8bbcf066dc497710f38eef84f598f5",
+  "files_excluding_manifest_self": [
+    {
+      "path": ".dockerignore",
+      "bytes": 97,
+      "sha256": "9beca1c90e057a4a552acd019ba0cf2b95be5d679f72be4480fc02b39ecbac2c",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": ".env.production.example",
+      "bytes": 1349,
+      "sha256": "bbf52bffa21aeb1db5f33d6358691634663308492cbff1bd777b0615f4e15af9",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 360,
+      "sha256": "18f5cf9551696467469334d89c530c1e1851e35a74ac557a9698de634cb31883",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "EXPORT/CHANGELOG.md",
+      "bytes": 11045,
+      "sha256": "fd8d36871aca4202cf33f66de64fdc90b3b8af92bcc102db997bf178e9ca8771",
+      "origin": "export-only documentation"
+    },
+    {
+      "path": "EXPORT/KNOWN_ISSUES.md",
+      "bytes": 1599,
+      "sha256": "14438d8fff91c09459ea4df91cad301ce083803054e3fefd4891ebd044f7d7bb",
+      "origin": "export-only documentation"
+    },
+    {
+      "path": "EXPORT/OMISSIONS.md",
+      "bytes": 3722,
+      "sha256": "7c8c5221cdb5d43981b5d445b5e7379371b7d81a7a62d884689b577b888f9b7d",
+      "origin": "export-only documentation"
+    },
+    {
+      "path": "EXPORT/VERSION.json",
+      "bytes": 1042,
+      "sha256": "6b2fd95286c1fbe13f3cd090286302e50cc27a4fd30525594365c7eff6ef11ee",
+      "origin": "export-only documentation"
+    },
+    {
+      "path": "EXPORT/WINDOWS_SETUP.md",
+      "bytes": 8748,
+      "sha256": "d28e1767b9238c9e3df89f2d2dd390401fa73f7c6820791bf8c6e31bf18b2029",
+      "origin": "export-only documentation"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2870,
+      "sha256": "8d5bd1f56b5a2fc0c3d7c0efffe93d1ea49fddb03f95e2028fb6597f0232d75b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/.env.example",
+      "bytes": 2052,
+      "sha256": "7fe98368e565dd90cfc8e02777c73a9516b6353e78df06d55413c41de3c5aca4",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/Dockerfile",
+      "bytes": 885,
+      "sha256": "26f6c4fe858b9c714e81af4731703df143308be0307c42cc2da4f781526fe7b8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/admin.py",
+      "bytes": 2425,
+      "sha256": "fbaad0521d0a7ceb50977e3188914d0701e0a270f9d99baff5381afdd9889830",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/api.py",
+      "bytes": 3701,
+      "sha256": "9547765e8c57a8c54be9030017a3cbe55a6ab6f483a821e580662ec3178ee0a2",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/apps.py",
+      "bytes": 156,
+      "sha256": "cd49806c1abe7eb680e9b5b157230aac02a449abd4850e92bfc17dc585aed726",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/context.py",
+      "bytes": 380,
+      "sha256": "4bad8f496db73911cef5898e10d5a6aa36259f95725173acb0dcd844b713242b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/demo_data.json",
+      "bytes": 2121,
+      "sha256": "0c3c8ba82280163e1b44750e219860494e58661e3b15697ade1614fcd9004c16",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/feeds.py",
+      "bytes": 1169,
+      "sha256": "d91f4eaa03e20d81061c5298ed8cb4e9b5c8af919bded5fc238aa51c1c775368",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/forms.py",
+      "bytes": 763,
+      "sha256": "4630929d01df870ea699ad5711fe377adb717adfba365412677579393ac0c767",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/ingestion.py",
+      "bytes": 11121,
+      "sha256": "62640c1cd83949b35196582694190227aefc8cc289207bc72ca2d0e8e990fc1e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/management/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/management/commands/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/management/commands/configure_sources.py",
+      "bytes": 1189,
+      "sha256": "e304f8e8382d60fbe327e167df98b7e0e57887a060938d0bf38a4575c792ed37",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/management/commands/fetch_news.py",
+      "bytes": 1296,
+      "sha256": "f89d7c175856e70497c4672cb9e910f737c209400b955337275cff27cd2b80e3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/management/commands/seed_demo.py",
+      "bytes": 3435,
+      "sha256": "6b071d95f8bd4ba5b2de681c934f45d907e9fe5468ff9d1be5701513c90c3dfb",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/migrations/0001_initial.py",
+      "bytes": 4198,
+      "sha256": "439a574c3cd783bb9ed484d8b7dc8663a9b6f2d4f6ed6413d7ec3dae0c360490",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/migrations/0002_article_breaking_until_article_canonical_source_url_and_more.py",
+      "bytes": 4393,
+      "sha256": "f9a72e23ecf11b8a23b581657f0a2787990f5a8cda6e25c93fae8385a4f19dc2",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/migrations/0003_editorial_trust_tags_dedup.py",
+      "bytes": 1225,
+      "sha256": "639d4426a16c962fd4c43c888e580fc347f80fce621b4b4d3a5752ff27bd219f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/migrations/0004_publisher_and_unique_title.py",
+      "bytes": 1287,
+      "sha256": "74449c5246088035ec921e765f9be9ac31a5229fdfe4a5dfa7323ce0f0d49860",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/migrations/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/models.py",
+      "bytes": 7425,
+      "sha256": "15106ddc9f9f1c88f38faa5423b124883421f73afc784655bc4ba9eac318cac4",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/network.py",
+      "bytes": 4017,
+      "sha256": "675eb8614cd3935cdc57559f1be312e0673494c2efbdbf3b3e0ed392fc06ed74",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/rest.py",
+      "bytes": 5759,
+      "sha256": "65f3aa20afd060271e469fa178fb20c9e23de544e2c085ac0630a90ba80b3449",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/services.py",
+      "bytes": 5695,
+      "sha256": "7c54e86f3e2a2dd98b3e58636a6be197a03612a19afabc0787b46a03bf8f2836",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/tests.py",
+      "bytes": 7793,
+      "sha256": "52b4e8a6700450c4ad96cf4bf593c514c9aab74e8f306810e6114cfc825a3ca2",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/tests_enhancements.py",
+      "bytes": 12586,
+      "sha256": "c8302cf5dcea97a846318dd0d3d32287c0f7cab1d322cc9acf95913b6e8bf6ee",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/tests_newsapi.py",
+      "bytes": 10493,
+      "sha256": "c0eea9f31ddfb39b2381dc80d0bd5c42c5ed1be961fa0645b7aa03b221b55141",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/tests_rest.py",
+      "bytes": 9771,
+      "sha256": "5a950528eac60e092e3142d229a3d6bca134cff21c9fac80d6484c4283524ed4",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/apps/news/views.py",
+      "bytes": 5487,
+      "sha256": "72bc504d1ef5bdd95138b221f7b980c055f490b0b1ad85f61017e37512a9f798",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/config/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/config/environment.py",
+      "bytes": 412,
+      "sha256": "15b9740c2696fc2f364e72f938720b302f2a9d68c9383832f7ed13ae34248c56",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/config/settings.py",
+      "bytes": 9625,
+      "sha256": "abbfb6d42c5f4c518238b3ad53ac28badbc75c7b79ac81f9741c211c50de3b1d",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/config/urls.py",
+      "bytes": 1983,
+      "sha256": "bed05afa70ac2cfb534c51428fb4d0e1a1a04a51636f98551029615133d031e7",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/config/wsgi.py",
+      "bytes": 163,
+      "sha256": "f2aa8cc9578bf5c0b188584e26350048e32ca91ecee31476ed4e9224fe302866",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/demo.sqlite3",
+      "bytes": 266240,
+      "sha256": "c16f26fbe6718eaefe4fc85450949bfde2717f429fe8cf5a1a5a9a56c023aa8c",
+      "origin": "rebuilt logical DB snapshot"
+    },
+    {
+      "path": "backend/manage.py",
+      "bytes": 240,
+      "sha256": "766fa1b89da7e360b649058ca7751f03b4bc8442c9ebeea65fb005c652e7f474",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2025/08/Asset-Allocation-Diversification-and-Rebalancing-A-Comprehensive-Guide.png",
+      "bytes": 224313,
+      "sha256": "63fca9af181c1d2b5c64fc5b5768aecde60633866bffac08325dd031206bda9a",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/05/England-Womens-T20I.webp.webp",
+      "bytes": 97152,
+      "sha256": "ef3dab2df0d51815bae9f32601a16f183818a3f0b8d1d1d40f9fdc85f1d7e022",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/06/India-T20I-squad-for-Ireland-England-Tour-2026-Full-squad-list-captain-schedule-and-key-selections-e.webp",
+      "bytes": 135200,
+      "sha256": "195d138691c6ee3ec3a001397fc67fd3ba4cac875454378642bcfa6bb3bb3c5f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/07/Abhishek-Sharma.jpg",
+      "bytes": 47156,
+      "sha256": "36f96cc66a4149ae94661c37d18452f5bc2bd49c72c95409f7bacd549a5e197f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/07/BCCI-receives-directives-to-include-Rajat-Patidar-in-place-of-Tilak-Varma-in-T20Is.webp.webp",
+      "bytes": 109486,
+      "sha256": "8102bccf1dffa5334fef9e0ba96072f975ac3b840a98ccea31e891bee74f860a",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/07/Babar-Azam-and-Mohammad-Amir.webp.webp",
+      "bytes": 63058,
+      "sha256": "f7fbe3043d6b329b17e9bb96204fbfcfd5bfa548e071a9182d897eaa9ce6e098",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/media/2026/07/FotoJet-1-245.webp.webp",
+      "bytes": 59674,
+      "sha256": "3133f550196f3992bb58bdc6db23d5435c40271fc81347286de8729d34faf8d6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/requirements-production.txt",
+      "bytes": 153,
+      "sha256": "e62c698fbc51c92d992a8773f08625d521ddf1a68e11d32387117f1be8b05425",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/requirements-storage.txt",
+      "bytes": 29,
+      "sha256": "b01bbe7652dd66bc0f6c504728c8d52a1f19aa0f8ab1563c1fc5a072b3eb4271",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/requirements.txt",
+      "bytes": 147,
+      "sha256": "b9fcaa6bb638f1e5735cb27a751dd8dbf35a687d7fcfcc7b55fe4c19c4e344f5",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/resources/reference-ads.txt",
+      "bytes": 58,
+      "sha256": "921623e633173a7dbebe0fc674fa251845fb4472289d3f9728ce9b4f8f51f8bd",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/scripts/restore_media.py",
+      "bytes": 2840,
+      "sha256": "b90145ea0288457dbb4f498cbe9c282a5544389372ff6505cb8ff1e9db305f2e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/scripts/run_demo.sh",
+      "bytes": 387,
+      "sha256": "f96f5767d60f71571db9228f11abf48ffb9ec3dfa3e33d7cbff5f9ec1b91f7ec",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/css/magazine.css",
+      "bytes": 22074,
+      "sha256": "73d8b6e796413945a31ba7a7223e385951feba5599656d1364b3470f5ac8513b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/css/site.css",
+      "bytes": 13905,
+      "sha256": "16cacef7b6c1315fd6fa3b13424e831c8ccfe604b870dd3f5ec03836a04dc1c6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/img/book.webp",
+      "bytes": 6700,
+      "sha256": "736c6a0584067b531802dd17e604c1a3cd3fb8bfa6338ab50482418251e0a823",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/js/magazine.js",
+      "bytes": 5927,
+      "sha256": "da37b33fd3a8de37dd8f900839da343f068314b3b0e2ba8c6fb2784453b8b1b7",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/js/site.js",
+      "bytes": 2262,
+      "sha256": "502e83f017a381dade997dd04abde4eab788c5222740cfac7ff8df9a71d69467",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/static/js/widgets.js",
+      "bytes": 15726,
+      "sha256": "15cb7de61eba43288af5b5c00435a1211a08540364287ca3f40ece59d71046d0",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/404.html",
+      "bytes": 416,
+      "sha256": "af663ae317db7baf8a4c575e470358706185560a47d38da7e72ec27be2b9f6f8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/base.html",
+      "bytes": 2747,
+      "sha256": "fa4f9c5ce74745efa4e6f01be01470ba327c7120ffdf679871da432c69b4a314",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/animations.html",
+      "bytes": 788,
+      "sha256": "53748fea81db4290159effc3a42185c64c8221540e2af6842d3d0f8bed40bcb8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/article.html",
+      "bytes": 3734,
+      "sha256": "d3ac168485b29caa10e6f5ea901f0368a2d33b4005516286ea317686741bc6a6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/card.html",
+      "bytes": 1222,
+      "sha256": "2e1f10dab2986118b35b9ef14409436fb50c720c9fe90c496b2e586b5c066dc4",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/contact.html",
+      "bytes": 656,
+      "sha256": "9eb777469f7edd34438ed49426bdf910e63c61806eb57106d28887f9962d7ded",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/feature-card.html",
+      "bytes": 1247,
+      "sha256": "0ef175dc04ede7c18345809eca488a77a2d649df684e94ff1d6cdd6cb64af1e1",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/header.html",
+      "bytes": 4467,
+      "sha256": "dd976390ebd38b0bdf92142e29e3864145b56d5856f5b3cfb2bf3c63a6e4ff37",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/home.html",
+      "bytes": 2560,
+      "sha256": "14e0f6ff070b703e07bf776317b93ac51d08cc92df2c8de28c7971907ff67a51",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/info.html",
+      "bytes": 371,
+      "sha256": "94f57910bcef3d00355ff9d1e76363891144330d737ad62c152fa2ce35b22d83",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/list.html",
+      "bytes": 1978,
+      "sha256": "eda24baa9b110617f1894627456444e6075b4f89d9aa42598dccc7bcbec1b94c",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/templates/news/widgets.html",
+      "bytes": 410,
+      "sha256": "1e29bb690330d633894f6d76f406a83b1e6e243f5e0fc22b4d76e4a1442183e5",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "backend/tests/verify_production_settings.py",
+      "bytes": 1753,
+      "sha256": "ca6992f73dc9082f715a77497f5aab159748c9c27664efcb5267675cfc5c95bd",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "compose.yaml",
+      "bytes": 1825,
+      "sha256": "267eb913ec8036dcc29bb54c87d2e745fbfa18ac16c27df52ac9fb516c6e3fac",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "database/README.md",
+      "bytes": 3718,
+      "sha256": "d6f7d7cc8b53459368bf9377b9937db71a34ac97c0f1f903716dc1b022ae7136",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "database/backup-restore.md",
+      "bytes": 3380,
+      "sha256": "f6111e439fb5ff25252d6e4be79ab8781ff8dd293b5b89b6e1c655b9da275b12",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/AUDIT.md",
+      "bytes": 19070,
+      "sha256": "81c1837d3b6498eb429420caa716c44ee70b0dfd86b6591ab334f2b524aa2fad",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/BACKEND_STABILIZATION.md",
+      "bytes": 9948,
+      "sha256": "5e4238545ce0406e40df888c4883137a32ede01c5fe65ee8a3a1585fb91b7018",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "bytes": 20414,
+      "sha256": "d545a860a07c957b50156db81344f42f60d6a8c0de662dceee2608fcf14aff57",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/FILE_CHANGES.md",
+      "bytes": 21159,
+      "sha256": "11fdfa2de23b1747ab2714a9ddc65ba0424f25a46bb2c3b7ee33ff306501161d",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/FRONTEND_DEMO.md",
+      "bytes": 12845,
+      "sha256": "c44de6d315faa50460c528f64bdba7e247b701286c48d0d692ce86edc1e5dfb5",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/HANDOVER.md",
+      "bytes": 15229,
+      "sha256": "906dc376ae1ebf8f4d1e3c6cd38172a572b4d1e6736e3070559dcf46bb0daf67",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/AUDIT.md",
+      "bytes": 9983,
+      "sha256": "96e6f0ef93b8712400cac4f7a642f223447c1da5c7bc55020cebee2e6643e1e5",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/ENHANCEMENT_REPORT.md",
+      "bytes": 13753,
+      "sha256": "3c148be11e28f820cca5a29d6c57e011818b2277c074674e683997e9a0eb3d2e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/FILE_CHANGES.md",
+      "bytes": 3222,
+      "sha256": "4404e1bdaca2c3ae6eaf1aa64b6b4f18929c7e1d316a78bdffcef9f74349db5e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/IMPLEMENTATION.md",
+      "bytes": 3989,
+      "sha256": "c0bec6a85b903dd96c1a984a5c633da1c002efde41a971a0f0947943a4b275ec",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/INTEGRATIONS.md",
+      "bytes": 9950,
+      "sha256": "0069dfd3d44a63fe86798edc84694db24192433b58777139df158b29845ba591",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/MIGRATION_PLAN.md",
+      "bytes": 6846,
+      "sha256": "9f35e1a649e8e9bd9eb85e97affcf7b3e05bbef0c17209d60e500de37b8b3bec",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/PRE_EDIT_AUDIT.md",
+      "bytes": 11296,
+      "sha256": "5cd1fe498262279aa8cc2b1ff38abea799c26be55f7f1dc3f2b81f25d238d6a7",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/TESTING.md",
+      "bytes": 4681,
+      "sha256": "4f6f8b6d33205877bb0d8d336f16f47ce9c6ae69be54c1460a2a4f38f9499974",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/archive-contents.txt",
+      "bytes": 2491754,
+      "sha256": "b673d17a55995fd41384ceadcf40cb2ef35c99d9488af71e1493c70be8a20dbc",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/archive-inventory.json",
+      "bytes": 4133175,
+      "sha256": "efce2c98e70220e1bb5322517e164135ecf754175f62e4b0f67eca652bc6debb",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/baseline-.gitignore",
+      "bytes": 109,
+      "sha256": "3d006260f02552b207ff0fe8ca15d55a985d7f8ee477ccc0faf2167b04432e9a",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/baseline-README.md",
+      "bytes": 5685,
+      "sha256": "22993e61de3411ef5d2365fffaee6ada4d693d61898ba482834450bfce64884e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/baseline-START_HERE.md",
+      "bytes": 683,
+      "sha256": "e705dbe6475183fc2120673a98a174f0906952f1efdccf19b83c38d7a70080f3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/browser-results.json",
+      "bytes": 5333,
+      "sha256": "12b9c3a55e5180180d98708c9aa8d4d6ba79bd19f105a4969abc02098b0242ee",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/deploy/news-fetch.cron.example",
+      "bytes": 470,
+      "sha256": "2e12b187ca979e53e0c9ad85338bbda29f36a0caf600c2b79894127eceef3b0e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/README.md",
+      "bytes": 794,
+      "sha256": "f58abdb6a660c8536f1ccd086b78e85d888c817b290f2246690c946ac8b9c971",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/archive.png",
+      "bytes": 699069,
+      "sha256": "8da92668631e8e51245bacee51b650152cb4b9f0fc4d831ac5b042f73cdb8b76",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/article-desktop.png",
+      "bytes": 609475,
+      "sha256": "be389c3b27a565d868af4e028c7f87f349477d8b3712a46dff61e28a56210576",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/article-mobile.png",
+      "bytes": 143975,
+      "sha256": "db78195f88603ef63b440bd38416ff0a98b7eb47acd3fc2b2a284908e089e0b3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/browser-results.json",
+      "bytes": 16946,
+      "sha256": "956364c74477823e0800ba98ccafdbd8164b96544f9f0dbd0ba0a8d3fec158f9",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/contact.png",
+      "bytes": 135402,
+      "sha256": "15b8dfb841eb07ff5960ae1c11178b32ce808adef55782815eaa6877a7cafac3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/dark-emerald.png",
+      "bytes": 568737,
+      "sha256": "39f8361c4d7d7c4182053ee58c1f2232f2eedf46d50f4f872898c08ceb9b85ad",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/dark-ocean.png",
+      "bytes": 541600,
+      "sha256": "52717bbb269606ac262e2a6c923c0ba8445d5050764787c4de951bd9c9b22baa",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/dark-sunset.png",
+      "bytes": 570259,
+      "sha256": "f1322a3368002714cef70920bc0675d8739ddc8b1a451e6aef85143a880c3fb1",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/dark-violet.png",
+      "bytes": 565256,
+      "sha256": "273b4285c856cb3fd4acd4c05ce67c9a0d23d252c4f3b4ee60ae95be7364060b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/final-desktop.png",
+      "bytes": 2014532,
+      "sha256": "bf7f4f4668689ec0fbdd938344816cb1a5dac8812cf350df41996ea6c477d2ae",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/final-django-tests.txt",
+      "bytes": 7411,
+      "sha256": "4a2594e36a29f3a3a521c781e9ca4e81339bc55be4be81308c6130064793f8cd",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/final-migration-check.txt",
+      "bytes": 20,
+      "sha256": "a2bfa7b376c38062f77ce2b1e703876aaa04662f96355cdf5dc9d0d075302b05",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/final-mobile.png",
+      "bytes": 1753288,
+      "sha256": "3df9f6cc9c0707d05a8e240827913530d8ffad510a1f4bf8ee435a66c95d64f3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/final-system-check.txt",
+      "bytes": 48,
+      "sha256": "1e3e63f221bde88816c4a4ef7367691607b20cc1d194028a02ec9ae0586cf9b1",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/home-1024.png",
+      "bytes": 433452,
+      "sha256": "be68695b9b10d4788dde51b039d637bfbe86e2a47ef2d82ccd63d1af1278ba13",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/home-360.png",
+      "bytes": 86232,
+      "sha256": "3ddd1f70c16a0acdb493d53c0ce78f45d41af150e66a6051b1b9f12f26df5669",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/home-390.png",
+      "bytes": 87473,
+      "sha256": "c22456b911b8050b5f01a02d3b7fd2ed96dc2b8a11a6adc74a0e2a69646c7299",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/home-768.png",
+      "bytes": 371751,
+      "sha256": "99bfa95721dd5174c2fb008892a3a967a924c0bdac204e8ac56b027f938bf3aa",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/language-disabled.png",
+      "bytes": 68025,
+      "sha256": "64e5135301ba4b06093827fc203377b1fd9018eda678f4a5cb2aa50dc20f0603",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/light-emerald.png",
+      "bytes": 567354,
+      "sha256": "bfc30dd818890edd3b7d7343ba06657bbf0bf207fc9b3bf8e84f493ee131776b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/light-ocean.png",
+      "bytes": 539946,
+      "sha256": "d192a99dee5807cc2e32784ca5725681fd281e7d4c49ce1de60dc697c223c6f8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/light-sunset.png",
+      "bytes": 568213,
+      "sha256": "7c7fbbb3bea08f3e565859ca420dc265dc4f53eda0ecf8af4f63aafb082e62b8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/light-violet.png",
+      "bytes": 563500,
+      "sha256": "49d8a0e7cea4fc71ed9acc233a1258e33cd2ce724d12ca1afc18206989ad6f0d",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/live-source-checks.json",
+      "bytes": 513,
+      "sha256": "f81712f78a52fa250b23f06c3ca86a2b7a183ef40ca88bddf74694b2c9f01b14",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/mobile-hero.png",
+      "bytes": 313470,
+      "sha256": "223b36786117bd3645b343a3467f4eadb9c191086c3e91d99f78eaafbb1214b6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/palette-dropdown.png",
+      "bytes": 59868,
+      "sha256": "5a096d8a18eccede7ce6a3beb49bd40b15fc6a3fb74e76aab6c324bde947b569",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/preservation-check.json",
+      "bytes": 190,
+      "sha256": "bc7b4acfccf95f7dcd17018fde6fa1e1024cdd5b9dfaeaaf0ffc9872aa00137e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/provider-smoke.json",
+      "bytes": 1258,
+      "sha256": "14d5c5772ee7f434772b8c95264105ecdd915eab551821b137bd1d33e3f55dc4",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/reduced-motion.png",
+      "bytes": 316497,
+      "sha256": "e06c0fdf7b3a63d8b8ce6b941416b37adad3bd727f089b0ec69aeb7990279521",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/search.png",
+      "bytes": 168283,
+      "sha256": "49a7d0354f3a1aa2a00aaa8278e5938c23ec5a7e77715019d1816adfdc12746b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/supplemental-results.json",
+      "bytes": 1452,
+      "sha256": "1df58b2ce61c9c78905d1411f8d47cfadca0c4e1ba0bc07ad12238884f1b04b3",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/supplemental.cjs",
+      "bytes": 3261,
+      "sha256": "d024db01264eca474db707d2a5c23077fb3d501a9662babf83bfefd08d233995",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-calculator.png",
+      "bytes": 62142,
+      "sha256": "0e7f9c2da760db50a6fa5a4498b21f3ef3532990a225575fd4fe09dc8743e447",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-calendar.png",
+      "bytes": 84370,
+      "sha256": "cb6dc32d3faa58788c68e340f02d281905c4ebb12a88363449934032ca93eaae",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-clock.png",
+      "bytes": 85293,
+      "sha256": "2a3ff65e86109ce93638e82c431af77f81bdc667fa056cbe79cc8973b25fe7de",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-currency-disabled.png",
+      "bytes": 80112,
+      "sha256": "90a9c1aaabf655e887a1e8692a64da57c9b9f1a1abee9031c81ba6bf5bba88f1",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-units.png",
+      "bytes": 68913,
+      "sha256": "f264341c72bda41154cd9b2fc27aa6478c6d41b707cadcaf418aa9e707631c1f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-weather-disabled.png",
+      "bytes": 76560,
+      "sha256": "f1acca32b7161c58910d52fc56c4c31a5302abca27459a15c6069178afe6afeb",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widget-weather-fixture.png",
+      "bytes": 73524,
+      "sha256": "69ace76c8a1c1fd5b9e463ca6901d581704cee124493263b93099485942cf301",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/enhancement/widgets-dropdown.png",
+      "bytes": 60986,
+      "sha256": "ac72283049974f4ec7d8d9f2b8dd5bed8ce94f09cfed0c8f0de4516cd53943eb",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/legacy-tests/browser_qa.cjs",
+      "bytes": 3982,
+      "sha256": "e7c50d44293e8bf6938a70a1de88d9e26e6cd5b9dfd4039f6ad21fea0e0b6e35",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/legacy-tests/enhancement_qa.cjs",
+      "bytes": 16089,
+      "sha256": "258ebbd632e60aac134496a9bb6232c884a78f98ae8f18cda8d26cb2392c3c6e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/media-audit.jpg",
+      "bytes": 188676,
+      "sha256": "c11e993d2f2a3dc87f0b142a079c313311ca2c8067909b2d9d1186b78fe746a2",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/media-manifest.json",
+      "bytes": 1624,
+      "sha256": "68f544f369a256763c679915d70d05b0852f71b75c9390c9a0f88ad3cf5b1a9f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/media-restore-dry-run.json",
+      "bytes": 148,
+      "sha256": "7b9cb1b96330e8aa0a188cab7eb599c9f399004d3af137a60285184bf724aa65",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/move-manifest.json",
+      "bytes": 30296,
+      "sha256": "ad24f580c286f79c02fc8607935b3c3cb9f5a70522dea21274a916bd750343ca",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/plugin-audit.json",
+      "bytes": 705,
+      "sha256": "e201b804aa8db3a02ea1c9f52fcf9b858fd1c8798bfb3595984241b3f3604952",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/article-desktop.png",
+      "bytes": 1705968,
+      "sha256": "90df2e83c4d8c44f931173c56dbf69cb31d146d3a6febb45d1a08583e350beaa",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/article-mobile.png",
+      "bytes": 931714,
+      "sha256": "d27fb51a613d2e06521611dd67d963161f90ada54edf1254b074c1b5543d6a9d",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/dark.png",
+      "bytes": 725221,
+      "sha256": "ba014999f0bf29db68ad21ec95b9ca91b1dd7b4804b26fee2aa9b75f87e70782",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/home-desktop.png",
+      "bytes": 1699011,
+      "sha256": "414f0976b9741226bdd8551c1c54874aad49b7e79407b845837c7e862e639c41",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/home-mobile.png",
+      "bytes": 1145735,
+      "sha256": "09fa5809a29e8a07c285e7270c6c621f978bdfb8f2d28ff65191fbfb2560cb49",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/previews/menu-open.png",
+      "bytes": 193967,
+      "sha256": "cd2bfe1fa6119c7dee892b3469448657a09e94ee78066a75b326af49cbab5507",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/recovery/baseline-file-hashes.json",
+      "bytes": 6593,
+      "sha256": "8d69117869042ca5117ffef1c4631de470ebafb7e64e86b672180a0965a25d77",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/recovery/checkpoint.json",
+      "bytes": 232,
+      "sha256": "f4d27917cf0dcd90428ec7498ae198ddab7e24a9ca209b59c0a5a1474125a38c",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/reference-ads.txt",
+      "bytes": 58,
+      "sha256": "921623e633173a7dbebe0fc674fa251845fb4472289d3f9728ce9b4f8f51f8bd",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/archive/test-results.txt",
+      "bytes": 4031,
+      "sha256": "993f3e0caca75ab857fdb4d5d855060fccbd29dac568876676ff817d6ca0d21c",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/deploy/nginx-container.conf",
+      "bytes": 862,
+      "sha256": "439217bdd835955adf2eb40250f8e8a0789ce4cb00ae1b456af27f49f79e8fd6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "docs/file-manifest.json",
+      "bytes": 56234,
+      "sha256": "6b0517e72c7ff111383f2e4d2ff379abcc0c39a6a399ddfc178833bc0919ae03",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/.env.example",
+      "bytes": 173,
+      "sha256": "e65177827ebb6b80435a522d6a498c994e3f7db576d8abee00ed87c2eecd215f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/Dockerfile",
+      "bytes": 326,
+      "sha256": "890a85b4565dd9b8feb0efb379952c8e8fc1197fe355ab1f73bbc7d3f2ef4257",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/index.html",
+      "bytes": 438,
+      "sha256": "563a0f1bbc2218b10e4e7d84b2b9aae461e952ee6efad918cfd6c0021576093e",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "bytes": 39536,
+      "sha256": "48efa1fecfa9bc11eff05c0d054bf63c4f0e8f1b5bc122443ed62f019148c614",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/package.json",
+      "bytes": 717,
+      "sha256": "069bc5a7f50a3d3fc57a749b39462598a7dcd546781d35db8e339791fdfb914d",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/_redirects",
+      "bytes": 512,
+      "sha256": "ec6e091b9d00876017ca7353ca6befd9646a5da7468c641333c1b7ec674b06f0",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/book.webp",
+      "bytes": 6700,
+      "sha256": "736c6a0584067b531802dd17e604c1a3cd3fb8bfa6338ab50482418251e0a823",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/chip.webp",
+      "bytes": 50380,
+      "sha256": "a7fc5fde72af96b53d308efed434487c9f076fa8fd44db8029831c14b815d459",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/city.webp",
+      "bytes": 52462,
+      "sha256": "1bf019ffe4bf7169de24aed4d6d028f8cecdb01675a4b82cd1c255a1db316f3b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/cricket.webp",
+      "bytes": 47580,
+      "sha256": "28d53bfa92904104b8c0cb57a9b35226dac1d01f5a438cd3d9ddd0bc25e11c9c",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/mangrove.webp",
+      "bytes": 66930,
+      "sha256": "d054a2e293857a10f3a83b43497fcbbc90cf6f7c9013ed32153658548ab301d6",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/observatory.webp",
+      "bytes": 25680,
+      "sha256": "435e127bf048ab874413c9c8ab8569e78df1b46bdf969032a65e891a0eb685ce",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/public/preview/solar.webp",
+      "bytes": 61756,
+      "sha256": "12f22583a11bd8bb3511d97a15fc45db2726ae08b0578557c937e13c8fd888c1",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "bytes": 6638,
+      "sha256": "a3d5294b5090c52aa0ee8f1402d1804a537de5b8020f655b9ab03881eeb52197",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/components/Carousel.jsx",
+      "bytes": 4225,
+      "sha256": "5674df766f529cffcf768e5183d7d067b05ed25d096abbdbdc2e80d8fefac89b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/components/StoryCard.jsx",
+      "bytes": 1495,
+      "sha256": "6f48db9eed025d0528173164f8cd5adc3cb3b8b41ff99dc7ced781498d512744",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/components/Widgets.jsx",
+      "bytes": 890,
+      "sha256": "7a0388aeb9d708e525eb4faaeade5e3e9ea20d11e88cff209cd362e08ed0dbcd",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/components/legacyWidgets.js",
+      "bytes": 15976,
+      "sha256": "c337508f51cee6dddcb03abb5ae4e3c333da8c0ab6f086267dd49471fe5c07f2",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/context/Translation.jsx",
+      "bytes": 195,
+      "sha256": "253d737cdbb1e31b0f3375e4f0814f8e171346a5315e3548505c97593ba3fb64",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/main.jsx",
+      "bytes": 264,
+      "sha256": "da2d11eca8127a9fd62dbf7ea110ddab48d8b46050a96c49471c28fdd2e40ebe",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/pages/NewsPages.jsx",
+      "bytes": 9368,
+      "sha256": "e43d1256a11feb25607fda2c2154bd3ac7d4da663d7c48ecda8c6a9899884442",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/preview/Preview.jsx",
+      "bytes": 3495,
+      "sha256": "9cc0ea9f4d61ca77e3ac3dfadad0e5052c2bb4c049062b4110c046e5145ddffe",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/preview/data.js",
+      "bytes": 4523,
+      "sha256": "24155fa906d6c108e14381cb3e3bd9b8a874cbbc78a2a5b740a013e0432834b0",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/services/api.js",
+      "bytes": 1072,
+      "sha256": "d49d78f588c7aed8db05a4ce358903fc9f3c3a850fcf3dec90381faabd2a3b72",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/services/preferences.js",
+      "bytes": 324,
+      "sha256": "50b327fa249d0af614697d17ddf01ef00e0b4603dd9a072ed9306da9dbf65f0a",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/services/themes.js",
+      "bytes": 3112,
+      "sha256": "1c9f0b6e21dc7e2e17c790ac84d2f334283a1744c3167b338674ddbcbcc40216",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/src/styles/site.css",
+      "bytes": 21979,
+      "sha256": "b60d47320b944f893eb1aee0c56895df34254b77498042d3a81944699e512f5f",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/browser.cjs",
+      "bytes": 182,
+      "sha256": "df9f8a9e72aebfc186bb2da3b26b6f7d27e2505749da453934f079a0f43944ef",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/built-demo.cjs",
+      "bytes": 2193,
+      "sha256": "e2b9e2f31a14e1d220d284a50c76409e7c3b79fc7360938bb39f5b6dc304f750",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/config.test.js",
+      "bytes": 698,
+      "sha256": "efd4a84cf596e67116b55d21957f3b8d36595fd6ffaf8f266f882326091c3b7b",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/demo.cjs",
+      "bytes": 13293,
+      "sha256": "719f5c6a42d7ca1c5a39a8503ba2971f396dfcd97e4569426af9b15fdfb830d8",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/demo.test.js",
+      "bytes": 2895,
+      "sha256": "912f5f518bd23bfff14493e2c13b1e7e15a13df854473d2b5ef85bc0a9dac915",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/tests/routing.cjs",
+      "bytes": 5060,
+      "sha256": "ba2279e597fc75c79158320c1ceb061cd1d92161bbc404c7084fd779d0a10115",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "frontend/vite.config.js",
+      "bytes": 327,
+      "sha256": "ee5f08d05a6303d58e7d5c922756cdd5ac439dad69534ab8dc2f9b27e48bc713",
+      "origin": "unchanged byte copy of current working file"
+    },
+    {
+      "path": "netlify.toml",
+      "bytes": 260,
+      "sha256": "069f183f7e6dae8541c38454dd17f4603da0bc9cd4059bbff6ab4622c3fe12a6",
+      "origin": "unchanged byte copy of current working file"
+    }
+  ],
+  "changed_files_vs_base": [
+    {
+      "status": "M",
+      "path": "backend/.env.example",
+      "included": true,
+      "description": "Expanded safe local environment template for dotenv, NewsAPI, database timeout/TLS, origins, storage, cache and logging settings."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/admin.py",
+      "included": true,
+      "description": "Updated editorial/source trust controls and moderation/admin presentation."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/feeds.py",
+      "included": true,
+      "description": "Adjusted feed/sitemap behavior and article/source handling."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/ingestion.py",
+      "included": true,
+      "description": "Added NewsAPI metadata adapter, bounded pagination, safe provider diagnostics, publisher attribution, deduplication and atomic batch handling; known audit defects retained."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/management/commands/fetch_news.py",
+      "included": true,
+      "description": "Command reports failed sources and returns a command error rather than silently succeeding on provider failures."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/migrations/0001_initial.py",
+      "included": true,
+      "description": "Updated baseline field definitions; existing migration history is retained as found, not rewritten during export."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/migrations/0002_article_breaking_until_article_canonical_source_url_and_more.py",
+      "included": true,
+      "description": "Updated ingestion-related migration definitions as present in the working tree."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/models.py",
+      "included": true,
+      "description": "Added publisher attribution, unique nullable title hash and editorial/source model changes."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/network.py",
+      "included": true,
+      "description": "Hardened outbound HTTPS destination/redirect handling and bounded retry behavior."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/tests.py",
+      "included": true,
+      "description": "Adjusted core site regression expectations."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/tests_enhancements.py",
+      "included": true,
+      "description": "Updated source/editorial and legacy presentation regression tests."
+    },
+    {
+      "status": "M",
+      "path": "backend/apps/news/views.py",
+      "included": true,
+      "description": "Updated legacy homepage allocation and presentation query handling."
+    },
+    {
+      "status": "M",
+      "path": "backend/config/settings.py",
+      "included": true,
+      "description": "Added explicit dotenv loading, API/CORS/storage/cache/provider configuration and production safeguards."
+    },
+    {
+      "status": "M",
+      "path": "backend/config/urls.py",
+      "included": true,
+      "description": "Added REST endpoints and health routes while preserving legacy routes and admin."
+    },
+    {
+      "status": "M",
+      "path": "backend/demo.sqlite3",
+      "included": true,
+      "description": "Working sample database differs from base. Export contains a rebuilt, free-page-cleaned snapshot with identical logical table data; no private user credentials/sessions ship."
+    },
+    {
+      "status": "M",
+      "path": "backend/requirements-production.txt",
+      "included": true,
+      "description": "Added optional production Redis client dependency."
+    },
+    {
+      "status": "M",
+      "path": "backend/requirements.txt",
+      "included": true,
+      "description": "Updated/pinned backend dependencies including DRF, CORS and python-dotenv."
+    },
+    {
+      "status": "D",
+      "path": "backend/scripts/browser_qa.cjs",
+      "included": false,
+      "description": "Absent from current working tree; corresponding historical test is retained under docs/archive/legacy-tests/."
+    },
+    {
+      "status": "D",
+      "path": "backend/scripts/enhancement_qa.cjs",
+      "included": false,
+      "description": "Absent from current working tree; corresponding historical test is retained under docs/archive/legacy-tests/."
+    },
+    {
+      "status": "M",
+      "path": "backend/scripts/run_demo.sh",
+      "included": true,
+      "description": "Updated local launcher; it still installs dependencies and runs migrations and is not read-only."
+    },
+    {
+      "status": "M",
+      "path": "backend/static/css/magazine.css",
+      "included": true,
+      "description": "Adjusted retained Django magazine styles."
+    },
+    {
+      "status": "M",
+      "path": "backend/static/js/magazine.js",
+      "included": true,
+      "description": "Adjusted retained legacy animation/interaction logic."
+    },
+    {
+      "status": "M",
+      "path": "backend/templates/news/animations.html",
+      "included": true,
+      "description": "Updated retained animation/carousel template markup."
+    },
+    {
+      "status": "A",
+      "path": ".dockerignore",
+      "included": true,
+      "description": "Optional deployment/build configuration; not executed or enabled by export."
+    },
+    {
+      "status": "A",
+      "path": ".env.production.example",
+      "included": true,
+      "description": "Safe configuration template with placeholders; not a private environment file."
+    },
+    {
+      "status": "A",
+      "path": ".gitignore",
+      "included": true,
+      "description": "Ignore rules for secrets, caches, dependencies, builds and runtime files."
+    },
+    {
+      "status": "A",
+      "path": "README.md",
+      "included": true,
+      "description": "Project overview, local workflow and links to handover documentation."
+    },
+    {
+      "status": "A",
+      "path": "backend/Dockerfile",
+      "included": true,
+      "description": "Optional deployment/build configuration; not executed or enabled by export."
+    },
+    {
+      "status": "A",
+      "path": "backend/apps/news/migrations/0003_editorial_trust_tags_dedup.py",
+      "included": true,
+      "description": "Additive editorial trust/tag/deduplication schema migration."
+    },
+    {
+      "status": "A",
+      "path": "backend/apps/news/migrations/0004_publisher_and_unique_title.py",
+      "included": true,
+      "description": "Publisher attribution and nullable unique title-hash migration preserving existing rows."
+    },
+    {
+      "status": "A",
+      "path": "backend/apps/news/rest.py",
+      "included": true,
+      "description": "Read-only published article/category/tag/home APIs, health checks and moderated form endpoints."
+    },
+    {
+      "status": "A",
+      "path": "backend/apps/news/tests_newsapi.py",
+      "included": true,
+      "description": "Mocked NewsAPI, dotenv, rollback, deduplication and safe-error regression tests."
+    },
+    {
+      "status": "A",
+      "path": "backend/apps/news/tests_rest.py",
+      "included": true,
+      "description": "API, visibility, origin/CSRF and publication-trust regression tests."
+    },
+    {
+      "status": "A",
+      "path": "backend/config/environment.py",
+      "included": true,
+      "description": "Explicit backend dotenv loader; process environment takes precedence."
+    },
+    {
+      "status": "A",
+      "path": "backend/tests/verify_production_settings.py",
+      "included": true,
+      "description": "Offline production-security configuration harness; not active-runtime identification."
+    },
+    {
+      "status": "A",
+      "path": "compose.yaml",
+      "included": true,
+      "description": "Optional deployment/build configuration; not executed or enabled by export."
+    },
+    {
+      "status": "A",
+      "path": "database/README.md",
+      "included": true,
+      "description": "MariaDB configuration/preservation and backup/restore documentation."
+    },
+    {
+      "status": "A",
+      "path": "database/backup-restore.md",
+      "included": true,
+      "description": "MariaDB configuration/preservation and backup/restore documentation."
+    },
+    {
+      "status": "A",
+      "path": "docs/AUDIT.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: AUDIT.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/BACKEND_STABILIZATION.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: BACKEND_STABILIZATION.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/DEPLOYMENT.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: DEPLOYMENT.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/FILE_CHANGES.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: FILE_CHANGES.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/FRONTEND_DEMO.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: FRONTEND_DEMO.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/HANDOVER.md",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: HANDOVER.md."
+    },
+    {
+      "status": "A",
+      "path": "docs/archive/legacy-tests/browser_qa.cjs",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: browser_qa.cjs."
+    },
+    {
+      "status": "A",
+      "path": "docs/archive/legacy-tests/enhancement_qa.cjs",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: enhancement_qa.cjs."
+    },
+    {
+      "status": "A",
+      "path": "docs/deploy/nginx-container.conf",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: nginx-container.conf."
+    },
+    {
+      "status": "A",
+      "path": "docs/file-manifest.json",
+      "included": true,
+      "description": "Documentation, historical reference, deployment example or inventory: file-manifest.json."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/browser-results.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/collectstatic.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/built-demo-results.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/changed-files.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/client-desktop.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/client-mobile.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/home-1024.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/home-1440.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/home-360.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/home-390.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/home-768.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/preview-article-mobile.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/preview-article.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/results.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/routing-results.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/snapshot.html",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-emerald-press.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-graphite-gold.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-midnight-coral.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-ocean-editorial.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-sunset-journal.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-dark-violet-night.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-emerald-press.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-graphite-gold.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-midnight-coral.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-ocean-editorial.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-sunset-journal.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/demo-polish/theme-light-violet-night.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/desktop.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/django-tests.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/extra-browser-results.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/fail-closed.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/frontend-build.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/frontend-tests.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/migration-check.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/mobile.png",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/netlify-live-status.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/npm-production-audit.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/preservation.json",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/production-security-harness.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "docs/verification/system-check.txt",
+      "included": false,
+      "description": "Generated historical verification artifact; omitted from distribution (see OMISSIONS.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/.env.example",
+      "included": true,
+      "description": "Safe configuration template with placeholders; not a private environment file."
+    },
+    {
+      "status": "A",
+      "path": "frontend/Dockerfile",
+      "included": true,
+      "description": "Optional deployment/build configuration; not executed or enabled by export."
+    },
+    {
+      "status": "A",
+      "path": "frontend/index.html",
+      "included": true,
+      "description": "New working-tree file: index.html."
+    },
+    {
+      "status": "A",
+      "path": "frontend/package-lock.json",
+      "included": true,
+      "description": "Locked npm dependency graph for reproducible frontend installs."
+    },
+    {
+      "status": "A",
+      "path": "frontend/package.json",
+      "included": true,
+      "description": "Frontend package scripts, framework and dependency declarations."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/_redirects",
+      "included": true,
+      "description": "Frontend public asset or static route configuration."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/book.webp",
+      "included": true,
+      "description": "Frontend public asset or static route configuration."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/chip.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/city.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/cricket.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/mangrove.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/observatory.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/public/preview/solar.webp",
+      "included": true,
+      "description": "Explicit opt-in demo illustration asset, not live-reporting data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/App.jsx",
+      "included": true,
+      "description": "React UI component/page/context for App."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/components/Carousel.jsx",
+      "included": true,
+      "description": "React horizontal headline carousel with controls, interaction pause, six-second timer and reduced-motion handling; autoplay initially off."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/components/StoryCard.jsx",
+      "included": true,
+      "description": "React UI component/page/context for StoryCard."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/components/Widgets.jsx",
+      "included": true,
+      "description": "React UI component/page/context for Widgets."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/components/legacyWidgets.js",
+      "included": true,
+      "description": "React supporting module for legacyWidgets."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/context/Translation.jsx",
+      "included": true,
+      "description": "React UI component/page/context for Translation."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/main.jsx",
+      "included": true,
+      "description": "React UI component/page/context for main."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/pages/NewsPages.jsx",
+      "included": true,
+      "description": "React UI component/page/context for NewsPages."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/preview/Preview.jsx",
+      "included": true,
+      "description": "React UI component/page/context for Preview."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/preview/data.js",
+      "included": true,
+      "description": "React supporting module for data."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/services/api.js",
+      "included": true,
+      "description": "React supporting module for api."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/services/preferences.js",
+      "included": true,
+      "description": "React supporting module for preferences."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/services/themes.js",
+      "included": true,
+      "description": "React supporting module for themes."
+    },
+    {
+      "status": "A",
+      "path": "frontend/src/styles/site.css",
+      "included": true,
+      "description": "Public React layout, responsive styles, theme tokens and current image-led carousel sizing."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/browser.cjs",
+      "included": true,
+      "description": "Frontend regression test/harness: browser.cjs; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/built-demo.cjs",
+      "included": true,
+      "description": "Frontend regression test/harness: built-demo.cjs; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/config.test.js",
+      "included": true,
+      "description": "Frontend regression test/harness: config.test.js; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/demo.cjs",
+      "included": true,
+      "description": "Frontend regression test/harness: demo.cjs; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/demo.test.js",
+      "included": true,
+      "description": "Frontend regression test/harness: demo.test.js; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/tests/routing.cjs",
+      "included": true,
+      "description": "Frontend regression test/harness: routing.cjs; execution safety depends on suite (see WINDOWS_SETUP.md)."
+    },
+    {
+      "status": "A",
+      "path": "frontend/vite.config.js",
+      "included": true,
+      "description": "New working-tree file: vite.config.js."
+    },
+    {
+      "status": "A",
+      "path": "netlify.toml",
+      "included": true,
+      "description": "Optional deployment/build configuration; not executed or enabled by export."
+    }
+  ],
+  "omissions": [
+    {
+      "path": ".git/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/staticfiles/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/apps/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/apps/news/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/apps/news/management/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/apps/news/management/commands/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/apps/news/migrations/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "backend/config/__pycache__/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "docs/verification/**",
+      "reason": "Generated historical verification artifacts/logs/screenshots; source tests and narrative documentation are retained. Historical results are not current acceptance evidence."
+    },
+    {
+      "path": "docs/archive/recovery/NexusUp_Django_Demo.zip",
+      "reason": "Nested historical recovery/archive bundle excluded; may contain obsolete configuration or credentials. Current source is included directly."
+    },
+    {
+      "path": "frontend/node_modules/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "frontend/dist/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    },
+    {
+      "path": "frontend/dist-demo/**",
+      "reason": "Git metadata, installed dependency, cache, generated build or test output; reinstall/rebuild when needed."
+    }
+  ],
+  "source_git_status_unchanged": true
+}
