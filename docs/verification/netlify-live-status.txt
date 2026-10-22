@@ -1,5 +1,7 @@
 Read-only check: https://nexusup.netlify.app/
-Observed during this implementation session: HTTP 404; response title/h1 "Page not found".
-No deploy, site configuration, repository or DNS changes were made remotely.
-Netlify deploy logs, configured publish directory and deployed repository revision were unavailable.
-Local Vite build/publish output verified separately; this is NOT a verified live fix.
+Latest observation: homepage HTTP 200, title "NexusUp — A fresh perspective", deployed React index shell.
+/stories: HTTP 200 with the same index shell (SPA route fallback working).
+/definitely-missing-asset.txt: HTTP 404 (missing assets are not rewritten to HTML).
+No deploy, site configuration, repository or DNS changes were made remotely in this phase.
+Netlify deploy logs and deployed repository revision were unavailable, so the exact change
+that resolved the earlier 404 cannot be attributed or reproduced from remote evidence.

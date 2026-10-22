@@ -1,0 +1,43 @@
+{
+  "changed": [
+    "frontend/package.json",
+    "frontend/src/App.jsx",
+    "frontend/src/components/Carousel.jsx",
+    "frontend/src/components/StoryCard.jsx",
+    "frontend/src/components/Widgets.jsx",
+    "frontend/src/components/legacyWidgets.js",
+    "frontend/src/pages/NewsPages.jsx",
+    "frontend/src/styles/site.css",
+    "frontend/tests/browser.cjs",
+    "frontend/tests/config.test.js",
+    "frontend/tests/routing.cjs"
+  ],
+  "added": [
+    "frontend/public/preview/chip.webp",
+    "frontend/public/preview/city.webp",
+    "frontend/public/preview/cricket.webp",
+    "frontend/public/preview/mangrove.webp",
+    "frontend/public/preview/observatory.webp",
+    "frontend/public/preview/solar.webp",
+    "frontend/src/preview/Preview.jsx",
+    "frontend/src/preview/data.js",
+    "frontend/src/services/themes.js",
+    "frontend/tests/built-demo.cjs",
+    "frontend/tests/demo.cjs",
+    "frontend/tests/demo.test.js"
+  ],
+  "removed": [],
+  "backendFilesCompared": 68,
+  "backendChanges": [],
+  "supportingChanges": [
+    ".gitignore",
+    "README.md",
+    "docs/FRONTEND_DEMO.md",
+    "docs/verification/demo-polish/"
+  ],
+  "generatedBuildOutputs": [
+    "frontend/dist/",
+    "frontend/dist-demo/"
+  ],
+  "databaseSHA256": "596e651877c38894d3cadae258ec6acca2cfc5588777b950a7d51c6254ccaa98"
+}

@@ -1,0 +1,103 @@
+{
+  "checks": [
+    "carousel auto-advance after explicit play",
+    "carousel hover pause",
+    "carousel keyboard focus pause after pointer leaves",
+    "broken image falls back without broken image icon",
+    "search via header",
+    "category filtering",
+    "mobile navigation closes after routing",
+    "built frontend article refresh via same-origin proxy",
+    "reserved API/static/media/assets paths never use SPA fallback",
+    "RSS sitemap robots ads admin readiness routes",
+    "all twelve palette/mode combinations: body muted and accent contrast >=4.5"
+  ],
+  "contrast": [
+    {
+      "mode": "light",
+      "palette": "midnight-coral",
+      "text": 13.92190836384729,
+      "muted": 6.614717279431584,
+      "accent": 6.196165107398093
+    },
+    {
+      "mode": "light",
+      "palette": "ocean-editorial",
+      "text": 12.749857824623724,
+      "muted": 6.135365733087158,
+      "accent": 6.972779498193149
+    },
+    {
+      "mode": "light",
+      "palette": "violet-night",
+      "text": 13.14557281918546,
+      "muted": 6.437322050264973,
+      "accent": 7.168918788641098
+    },
+    {
+      "mode": "light",
+      "palette": "emerald-press",
+      "text": 12.103799838634393,
+      "muted": 5.915885714166034,
+      "accent": 6.807037646737834
+    },
+    {
+      "mode": "light",
+      "palette": "sunset-journal",
+      "text": 12.352144534896665,
+      "muted": 6.0232720658909615,
+      "accent": 5.996189351299697
+    },
+    {
+      "mode": "light",
+      "palette": "graphite-gold",
+      "text": 12.138731876530798,
+      "muted": 5.863082680539427,
+      "accent": 5.737826278416018
+    },
+    {
+      "mode": "dark",
+      "palette": "midnight-coral",
+      "text": 14.899191069403983,
+      "muted": 7.456243407916665,
+      "accent": 7.79396239543139
+    },
+    {
+      "mode": "dark",
+      "palette": "ocean-editorial",
+      "text": 15.392674507870916,
+      "muted": 8.158029272433362,
+      "accent": 8.913664433494986
+    },
+    {
+      "mode": "dark",
+      "palette": "violet-night",
+      "text": 15.02089392676318,
+      "muted": 7.990205127219564,
+      "accent": 7.751301198218488
+    },
+    {
+      "mode": "dark",
+      "palette": "emerald-press",
+      "text": 14.831245716630715,
+      "muted": 7.871243686548401,
+      "accent": 8.489437490532206
+    },
+    {
+      "mode": "dark",
+      "palette": "sunset-journal",
+      "text": 14.48771974520258,
+      "muted": 7.529445560405384,
+      "accent": 7.6206198765868995
+    },
+    {
+      "mode": "dark",
+      "palette": "graphite-gold",
+      "text": 14.648063128836947,
+      "muted": 7.783630758427431,
+      "accent": 8.502019806855827
+    }
+  ],
+  "passed": true,
+  "note": "Built proxy verification is local HTTP, not production nginx/TLS."
+}

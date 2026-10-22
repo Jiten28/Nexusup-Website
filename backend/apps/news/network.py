@@ -51,14 +51,19 @@ class PublicHTTPSHandler(HTTPSHandler):
 class SafeRedirect(HTTPRedirectHandler):
     def redirect_request(self,req,fp,code,msg,headers,newurl):
         validate_url(newurl)
+        old_host=urlsplit(req.full_url).hostname
+        new_host=urlsplit(newurl).hostname
+        if old_host != new_host and any(req.has_header(name) for name in ('Authorization','X-api-key','X-Api-Key')):
+            raise ValueError('Cross-host redirects with credentials are blocked.')
         return super().redirect_request(req,fp,code,msg,headers,newurl)
 
 
-def _fetch_bytes(url,data=None,max_bytes=2_000_000):
+def _fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None):
     validate_url(url)
-    headers={'User-Agent':'NexusUpFeedReader/1.0 (+editorial RSS metadata only)','Accept':'application/rss+xml,application/atom+xml,application/json,text/xml;q=0.9'}
-    if data is not None: headers['Content-Type']='application/json'
-    req=Request(url,data=json.dumps(data).encode() if data is not None else None,headers=headers)
+    request_headers={'User-Agent':'NexusUpFeedReader/1.0 (+editorial RSS metadata only)','Accept':'application/rss+xml,application/atom+xml,application/json,text/xml;q=0.9'}
+    request_headers.update(headers or {})
+    if data is not None: request_headers['Content-Type']='application/json'
+    req=Request(url,data=json.dumps(data).encode() if data is not None else None,headers=request_headers)
     # Do not inherit environment proxies that could bypass destination validation.
     with build_opener(ProxyHandler({}),SafeRedirect(),PublicHTTPSHandler()).open(req,timeout=8) as response:
         body=response.read(max_bytes+1)
@@ -66,17 +71,18 @@ def _fetch_bytes(url,data=None,max_bytes=2_000_000):
         return body
 
 
-def fetch_bytes(url,data=None,max_bytes=2_000_000):
+def fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None):
     # Bounded retries for transient GET failures only. Respect provider rate limiting;
     # HTTP 429 is not retried here and the source interval remains in force.
     import time
     from urllib.error import HTTPError, URLError
     for attempt in range(3):
-        try: return _fetch_bytes(url,data=data,max_bytes=max_bytes)
+        try: return _fetch_bytes(url,data=data,max_bytes=max_bytes,headers=headers)
         except HTTPError as exc:
             if data is not None or exc.code not in (502,503,504) or attempt==2: raise
         except (URLError,TimeoutError,OSError):
             if data is not None or attempt==2: raise
         time.sleep(2**attempt)
 
-def fetch_json(url,data=None): return json.loads(fetch_bytes(url,data=data))
+def fetch_json(url,data=None,headers=None):
+    return json.loads(fetch_bytes(url,data=data,headers=headers))

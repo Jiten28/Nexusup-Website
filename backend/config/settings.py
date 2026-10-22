@@ -2,13 +2,31 @@ import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
+from .environment import load_project_environment
+load_project_environment(BASE_DIR / '.env')
+
+def env_list(name, default=''):
+    return [value.strip() for value in os.getenv(name, default).split(',') if value.strip()]
+
+def env_int(name, default, minimum=None, maximum=None):
+    raw = os.getenv(name, str(default))
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise ImproperlyConfigured(f'{name} must be an integer.') from exc
+    if minimum is not None and value < minimum:
+        raise ImproperlyConfigured(f'{name} must be at least {minimum}.')
+    if maximum is not None and value > maximum:
+        raise ImproperlyConfigured(f'{name} must be at most {maximum}.')
+    return value
+
 DEBUG = os.getenv('DJANGO_DEBUG', '0') == '1'
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 if not SECRET_KEY:
     if not DEBUG:
         raise ImproperlyConfigured('Set DJANGO_SECRET_KEY for non-demo use.')
     SECRET_KEY = 'local-demo-only-not-for-production-7478f562'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],testserver').split(',')
+ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],testserver')
 INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','django.contrib.sitemaps','apps.news.apps.NewsConfig','rest_framework','corsheaders']
 MIDDLEWARE = ['django.middleware.security.SecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','corsheaders.middleware.CorsMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']
 ROOT_URLCONF = 'config.urls'
@@ -19,9 +37,9 @@ if DB_ENGINE == 'mariadb':
     required = ['DB_NAME','DB_USER','DB_PASSWORD','DB_HOST']
     if any(not os.getenv(key) for key in required):
         raise ImproperlyConfigured('MariaDB requires DB_NAME, DB_USER, DB_PASSWORD and DB_HOST.')
-    DATABASES = {'default':{'ENGINE':'django.db.backends.mysql','NAME':os.environ['DB_NAME'],'USER':os.environ['DB_USER'],'PASSWORD':os.environ['DB_PASSWORD'],'HOST':os.environ['DB_HOST'],'PORT':os.getenv('DB_PORT','3306'),'CONN_MAX_AGE':60,'OPTIONS':{'charset':'utf8mb4','init_command':"SET sql_mode='STRICT_TRANS_TABLES'"}}}
+    DATABASES = {'default':{'ENGINE':'django.db.backends.mysql','NAME':os.environ['DB_NAME'],'USER':os.environ['DB_USER'],'PASSWORD':os.environ['DB_PASSWORD'],'HOST':os.environ['DB_HOST'],'PORT':os.getenv('DB_PORT','3306'),'CONN_MAX_AGE':env_int('DB_CONN_MAX_AGE',60,0,3600),'OPTIONS':{'charset':'utf8mb4','init_command':"SET sql_mode='STRICT_TRANS_TABLES'",'isolation_level':'read committed','connect_timeout':env_int('DB_CONNECT_TIMEOUT',10,1,120),'read_timeout':env_int('DB_READ_TIMEOUT',30,1,600),'write_timeout':env_int('DB_WRITE_TIMEOUT',30,1,600)}}}
 elif DB_ENGINE == 'sqlite' and DEBUG:
-    DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME':BASE_DIR/'demo.sqlite3'}}
+    DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME':Path(os.getenv('SQLITE_PATH') or BASE_DIR/'demo.sqlite3')}}
 else:
     raise ImproperlyConfigured('Production requires DB_ENGINE=mariadb. SQLite is demo-only.')
 AUTH_PASSWORD_VALIDATORS = [{'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},{'NAME':'django.contrib.auth.password_validation.MinimumLengthValidator'},{'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator'},{'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator'}]
@@ -50,8 +68,10 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # Start at zero until HTTPS is verified on every production hostname.
+    # Increase deliberately; do not enable includeSubDomains/preload without owner approval.
+    SECURE_HSTS_SECONDS = env_int('SECURE_HSTS_SECONDS',0,0,63072000)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS','0') == '1'
     SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD','0') == '1'
 
 # External integrations are explicitly opt-in; no outbound request occurs on homepage render.
@@ -64,12 +84,13 @@ LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','https://libretranslate.com'
 
 # Portable origin, storage, database TLS and health settings.
 FRONTEND_URL = os.getenv('FRONTEND_URL', SITE_URL).rstrip('/')
-CORS_ALLOWED_ORIGINS = [x.strip() for x in os.getenv('CORS_ALLOWED_ORIGINS','').split(',') if x.strip()]
-CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv('CSRF_TRUSTED_ORIGINS','').split(',') if x.strip()]
+CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS','0') == '1'
 if os.getenv('TRUST_PROXY_HTTPS','0') == '1':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO','https')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY','')
+NEWS_API_MAX_PAGES = env_int('NEWS_API_MAX_PAGES',1,1,5)
 if DB_ENGINE == 'mariadb':
     ssl_options = {}
     for env, key in [('DB_SSL_CA','ca'),('DB_SSL_CERT','cert'),('DB_SSL_KEY','key')]:
@@ -77,6 +98,11 @@ if DB_ENGINE == 'mariadb':
     if os.getenv('DB_SSL_CA'): ssl_options['check_hostname'] = True
     if not DEBUG and os.getenv('DB_TLS_REQUIRED','1')=='1' and not os.getenv('DB_SSL_CA'):
         raise ImproperlyConfigured('Production MariaDB requires DB_SSL_CA, or explicitly DB_TLS_REQUIRED=0 for an isolated local database network.')
+    if os.getenv('DB_SSL_CA') and not Path(os.environ['DB_SSL_CA']).is_file():
+        raise ImproperlyConfigured('DB_SSL_CA must name a readable CA certificate file.')
+    for key in ('DB_SSL_CERT','DB_SSL_KEY'):
+        if os.getenv(key) and not Path(os.environ[key]).is_file():
+            raise ImproperlyConfigured(f'{key} must name a readable certificate file.')
     if ssl_options:
         DATABASES['default']['OPTIONS']['ssl'] = ssl_options
         if os.getenv('DB_SSL_CA'): DATABASES['default']['OPTIONS']['ssl_mode'] = 'VERIFY_IDENTITY'
@@ -96,7 +122,13 @@ if MEDIA_STORAGE == 's3':
     AWS_QUERYSTRING_AUTH = os.getenv('AWS_QUERYSTRING_AUTH','1')=='1'
 elif MEDIA_STORAGE != 'local':
     raise ImproperlyConfigured('MEDIA_STORAGE must be local or s3')
-REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.AllowAny'],'DEFAULT_AUTHENTICATION_CLASSES':[], 'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer']}
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.AllowAny'],
+    'DEFAULT_AUTHENTICATION_CLASSES':[],
+    'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer'],
+    'DEFAULT_THROTTLE_CLASSES':['rest_framework.throttling.AnonRateThrottle'],
+    'DEFAULT_THROTTLE_RATES':{'anon':os.getenv('API_ANON_RATE','120/minute')},
+}
 LOGGING = {'version':1,'disable_existing_loggers':False,'handlers':{'console':{'class':'logging.StreamHandler'}},'root':{'handlers':['console'],'level':os.getenv('LOG_LEVEL','INFO')}}
 
 SESSION_COOKIE_SAMESITE = os.getenv('COOKIE_SAMESITE','Lax')

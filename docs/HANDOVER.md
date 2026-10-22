@@ -4,7 +4,7 @@
 
 The supplied enhanced Django project was migrated incrementally into a portable React/Vite + Django/DRF application. This is a **locally verified implementation and deployment package**, not a claim that a client's production environment is deployed or fully accepted. Original sample records/media and migration history are preserved. No fabricated live news or provider credentials were added.
 
-**Live Netlify still returns HTTP 404** on the read-only check made during this session. The local React build/publishing profile is prepared; remote deploy logs, configured repository revision and hosting access are still needed to verify a live fix. Nothing was deployed, DNS was not changed, no paid service was activated and no provider was enabled.
+**Live Netlify now returns the deployed React shell with HTTP 200** for the homepage and `/stories`; a missing asset returns 404 as expected. The historical 404 is no longer reproducible, but remote deploy logs and the configured repository revision remain unavailable, so the exact external action that changed the state is unknown. Nothing was deployed or changed in Netlify/DNS during backend stabilization. See `docs/BACKEND_STABILIZATION.md` and `docs/verification/netlify-live-status.txt`.
 
 ## Implemented
 
