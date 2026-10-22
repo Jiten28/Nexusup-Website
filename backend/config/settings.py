@@ -80,7 +80,8 @@ UTILITIES_NETWORK_ENABLED = os.getenv('UTILITIES_NETWORK_ENABLED','0') == '1'
 OPEN_METEO_API_KEY = os.getenv('OPEN_METEO_API_KEY','')
 TRANSLATION_PROVIDER = os.getenv('TRANSLATION_PROVIDER','disabled')
 TRANSLATION_API_KEY = os.getenv('TRANSLATION_API_KEY','')
-LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','https://libretranslate.com').rstrip('/')
+LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','http://127.0.0.1:5000').rstrip('/')
+TRANSLATION_TIMEOUT = env_int('TRANSLATION_TIMEOUT',15,1,60)
 
 # Portable origin, storage, database TLS and health settings.
 FRONTEND_URL = os.getenv('FRONTEND_URL', SITE_URL).rstrip('/')

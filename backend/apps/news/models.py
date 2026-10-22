@@ -59,6 +59,12 @@ class FetchRun(models.Model):
     imported = models.PositiveIntegerField(default=0)
     skipped = models.PositiveIntegerField(default=0)
     error = models.CharField(max_length=300, blank=True)
+    state = models.CharField(max_length=12, default='legacy', choices=[('legacy','Legacy'),('running','Running'),('success','Success'),('failed','Failed'),('blocked','Blocked'),('deferred','Deferred')])
+    fetched = models.PositiveIntegerField(default=0)
+    parsed = models.PositiveIntegerField(default=0)
+    rejected = models.PositiveIntegerField(default=0)
+    duplicates = models.PositiveIntegerField(default=0)
+    published = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['-started_at']
 
 class Article(models.Model):

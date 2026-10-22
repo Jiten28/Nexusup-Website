@@ -89,7 +89,7 @@ class RESTTests(TestCase):
     def test_health_sanitized_failure(self,cursor):
         response=self.client.get('/health/ready/');self.assertEqual(response.status_code,503);self.assertNotIn('private-password',response.content.decode())
 
-@override_settings(DEBUG=True)
+@override_settings(DEBUG=True, NEWS_FETCH_ENABLED=True)
 class TrustTests(TestCase):
     @classmethod
     def setUpTestData(cls):call_command('seed_demo',verbosity=0)

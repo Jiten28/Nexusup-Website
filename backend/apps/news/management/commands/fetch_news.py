@@ -1,20 +1,39 @@
-from django.core.management.base import BaseCommand,CommandError
+from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from apps.news.models import NewsSource
+from apps.news.models import NewsSource, FetchRun
 from apps.news.ingestion import ingest
+
+
 class Command(BaseCommand):
-    help='Fetch eligible enabled/rights-confirmed sources on a scheduler. Never called by homepage.'
-    def add_arguments(self,p):
-        p.add_argument('--source',type=int)
-        p.add_argument('--dry-run',action='store_true')
-    def handle(self,*args,**o):
-        if not settings.NEWS_FETCH_ENABLED:raise CommandError('News fetching is disabled. Set NEWS_FETCH_ENABLED=1 only after reviewing source rights and network policy.')
-        sources=NewsSource.objects.filter(enabled=True,rights_confirmed=True).select_related('default_category')
-        if o['source']:sources=sources.filter(pk=o['source'])
-        if o['source'] and not sources.exists():raise CommandError(f'No eligible enabled source found for ID {o["source"]}.')
-        failures=0
+    help = 'Explicitly fetch eligible sources once. Enabling a source does not schedule or run it.'
+
+    def add_arguments(self, parser):
+        parser.add_argument('--source', type=int, help='Existing NewsSource database ID (not a name or URL).')
+        parser.add_argument('--dry-run', action='store_true', help='Network/parse only; no database writes or fetch-run records.')
+
+    def handle(self, *args, **options):
+        sources = NewsSource.objects.select_related('default_category')
+        if options['source'] is not None:
+            sources = sources.filter(pk=options['source'])
+            if not sources.exists():
+                raise CommandError('No source exists for the supplied ID; check the database selected by this process.')
+        else:
+            if not settings.NEWS_FETCH_ENABLED:
+                raise CommandError('News fetching is disabled. Review rights before setting NEWS_FETCH_ENABLED=1.')
+            sources = sources.filter(enabled=True, rights_confirmed=True)
+            if not sources.exists():
+                raise CommandError('No eligible sources: review source selection and rights; no flags were changed.')
+        failures = 0
         for source in sources:
-            try:self.stdout.write(f'{source.name}: {ingest(source,dry_run=o["dry_run"])}')
-            except ValueError as e:
-                failures+=1;self.stderr.write(f'{source.name}: {e}')
-        if failures:raise CommandError(f'{failures} source fetch(es) failed; stored content was retained.')
+            try:
+                result = ingest(source, dry_run=options['dry_run'])
+                self.stdout.write(f'source_id={source.pk}: {result}')
+                if not options['dry_run']:
+                    run = FetchRun.objects.filter(pk=getattr(source, '_last_fetch_run_id', None)).first()
+                    if run:
+                        self.stdout.write(f'run_id={run.pk} state={run.state} fetched={run.fetched} parsed={run.parsed} rejected={run.rejected} duplicates={run.duplicates} saved={run.imported} published={run.published}')
+            except ValueError as exc:
+                failures += 1
+                self.stderr.write(f'source_id={source.pk}: {exc}')
+        if failures:
+            raise CommandError(f'{failures} source fetch(es) failed or were blocked; stored content retained.')

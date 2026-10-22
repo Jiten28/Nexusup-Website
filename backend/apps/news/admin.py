@@ -38,10 +38,22 @@ class NewsSourceAdmin(admin.ModelAdmin):
     list_display=['name','enabled','rights_confirmed','trusted','auto_publish','last_success_at','last_error']
     readonly_fields=['last_attempt_at','last_success_at','next_fetch_at','last_error']
     list_filter=['enabled','rights_confirmed','trusted','auto_publish','adapter']
+    actions = ['fetch_selected_sources']
+
+    @admin.action(description='Fetch selected sources once (requires global enablement and approved rights)', permissions=['change'])
+    def fetch_selected_sources(self, request, queryset):
+        from .ingestion import ingest
+        for source in queryset:
+            try:
+                result = ingest(source)
+                self.message_user(request, f'Source {source.pk}: {result}')
+            except ValueError as exc:
+                self.message_user(request, f'Source {source.pk}: {exc}', level='error')
+
 @admin.register(FetchRun)
 class FetchRunAdmin(admin.ModelAdmin):
-    list_display=['source','started_at','success','imported','skipped','error']
-    readonly_fields=['source','started_at','success','imported','skipped','error']
+    list_display=['source','started_at','state','success','fetched','parsed','rejected','duplicates','imported','published','error']
+    readonly_fields=['source','started_at','state','success','fetched','parsed','rejected','duplicates','imported','skipped','published','error']
     def has_add_permission(self,request):return False
 
 admin.site.register(Tag)

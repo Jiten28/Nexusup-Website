@@ -9,7 +9,7 @@ from .models import Article,Category
 
 def unavailable(exc):
     # Only deliberate validation/status text is returned, never raw HTTP/provider exceptions or keys.
-    message=str(exc) if type(exc) is ValueError else 'Provider unavailable or rate limited. Please try again later.'
+    message=str(exc) if type(exc) is ValueError or isinstance(exc, services.TranslationError) else 'Provider unavailable or rate limited. Please try again later.'
     return JsonResponse({'error':message[:250]},status=503)
 @require_GET
 def currency(request):
@@ -31,6 +31,8 @@ def languages(request):
 
 def translation_payload(path):
     # Derive every translated string on the server: not an arbitrary paid translation proxy.
+    if not isinstance(path,str) or len(path)>1024:
+        raise ValueError('Invalid public page path')
     parsed=urlsplit(path)
     if parsed.netloc or parsed.scheme:raise ValueError('Only local public page paths accepted')
     try:match=resolve(parsed.path)
@@ -49,13 +51,19 @@ def translation_payload(path):
 @require_POST
 def translate(request):
     if len(request.body)>2048:return JsonResponse({'error':'Request too large'},status=400)
-    if not request.session.session_key:request.session.create()
-    if not cache.add('translate-limit:'+request.session.session_key,True,10):return JsonResponse({'error':'Please wait before translating again.'},status=429)
+    # Rate-limit without creating database sessions merely for translation.
+    import hashlib
+    client = request.META.get('REMOTE_ADDR','unknown')
+    limit_key = hashlib.sha256(client.encode()).hexdigest()
+    if not cache.add('translate-limit:'+limit_key,True,10):return JsonResponse({'error':'Please wait before translating again.'},status=429)
     try:
-        data=json.loads(request.body);payload=translation_payload(data.get('path','/'))
+        data=json.loads(request.body)
+        if not isinstance(data,dict) or data.get('source','en') != 'en' or not isinstance(data.get('language','en'),str):
+            raise ValueError('Expected a JSON object with source English and a target language code.')
+        payload=translation_payload(data.get('path','/'))
         # Fixed server-side corpus, bounded request volume. Add shared production quotas before public use.
         keys=list(payload);texts=list(payload.values())
         if sum(map(len,texts))>45000:raise ValueError('Page exceeds translation size limit')
         values=services.translate_texts(texts,data.get('language','en'))
-        return JsonResponse({'language':data.get('language'),'texts':dict(zip(keys,values)),'notice':'Machine translation. Original English remains available.'})
+        return JsonResponse({'source':'en','language':data.get('language','en'),'texts':dict(zip(keys,values)),'notice':'Machine translation. Original English remains available.'})
     except Exception as exc:return unavailable(exc)
