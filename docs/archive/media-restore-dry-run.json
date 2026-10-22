@@ -1,8 +1,0 @@
-{
-  "mode": "dry-run",
-  "eligible": 4022,
-  "bytes": 207037082,
-  "excluded_non_dated_or_non_raster": 2304,
-  "missing": 4015,
-  "conflicts": []
-}

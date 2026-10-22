@@ -1,7 +1,0 @@
-Read-only check: https://nexusup.netlify.app/
-Latest observation: homepage HTTP 200, title "NexusUp — A fresh perspective", deployed React index shell.
-/stories: HTTP 200 with the same index shell (SPA route fallback working).
-/definitely-missing-asset.txt: HTTP 404 (missing assets are not rewritten to HTML).
-No deploy, site configuration, repository or DNS changes were made remotely in this phase.
-Netlify deploy logs and deployed repository revision were unavailable, so the exact change
-that resolved the earlier 404 cannot be attributed or reproduced from remote evidence.
