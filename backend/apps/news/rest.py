@@ -25,9 +25,12 @@ class ArticleSerializer(serializers.ModelSerializer):
     source_name=serializers.CharField(source='source_label',read_only=True)
     date=serializers.DateTimeField(source='display_date',read_only=True)
     reading_minutes=serializers.IntegerField(read_only=True)
+    content_kind=serializers.SerializerMethodField()
+    def get_content_kind(self,obj):
+        return 'feed_summary' if obj.source_id or obj.imported_at else 'editorial'
     class Meta:
         model=Article
-        fields=['id','title','slug','excerpt','category','tags','image','image_alt','image_credit','source_name','canonical_source_url','date','featured','is_sample','reading_minutes']
+        fields=['id','title','slug','excerpt','category','tags','image','image_alt','image_credit','source_name','canonical_source_url','date','featured','is_sample','reading_minutes','content_kind']
     def get_image(self,obj):
         value=obj.image_src
         return self.context['request'].build_absolute_uri(value) if value else ''
@@ -40,8 +43,12 @@ class DetailSerializer(ArticleSerializer):
 class Pagination(PageNumberPagination):
     page_size=12; page_size_query_param='page_size'; max_page_size=24
 
-def public():
-    return Article.objects.published().select_related('category','author','source').prefetch_related('tags')
+def public(include_samples=False):
+    qs=Article.objects.published().select_related('category','author','source').prefetch_related('tags')
+    # Retain labeled samples for sample-only installations, never rank them over real news.
+    if not include_samples and qs.filter(is_sample=False).exists():
+        qs=qs.filter(is_sample=False)
+    return qs
 class ArticleList(generics.ListAPIView):
     serializer_class=ArticleSerializer; pagination_class=Pagination
     def get_queryset(self):
@@ -55,7 +62,7 @@ class ArticleList(generics.ListAPIView):
         return q.exclude(pk__in=exclude).distinct()
 class ArticleDetail(generics.RetrieveAPIView):
     serializer_class=DetailSerializer; lookup_field='slug'
-    def get_queryset(self):return public()
+    def get_queryset(self):return public(include_samples=True)
 class Categories(generics.ListAPIView):
     queryset=Category.objects.all(); serializer_class=CategorySerializer
 class Tags(generics.ListAPIView):
@@ -74,8 +81,8 @@ def home(request):
 @require_GET
 def related(request,slug):
     from django.shortcuts import get_object_or_404
-    article=get_object_or_404(public(),slug=slug)
-    data=ArticleSerializer(public().filter(category=article.category).exclude(pk=article.pk)[:4],many=True,context={'request':request}).data
+    article=get_object_or_404(public(include_samples=True),slug=slug)
+    data=ArticleSerializer(public(include_samples=True).filter(is_sample=article.is_sample,category=article.category).exclude(pk=article.pk)[:4],many=True,context={'request':request}).data
     return JsonResponse({'results':data})
 @require_GET
 def health(request): return JsonResponse({'status':'ok'})
@@ -102,6 +109,6 @@ def submit(request,slug=None):
     obj=form.save(commit=False)
     if slug:
         from django.shortcuts import get_object_or_404
-        obj.article=get_object_or_404(public(),slug=slug)
+        obj.article=get_object_or_404(public(include_samples=True),slug=slug)
     obj.save()
     return JsonResponse({'message':'Received for editorial review.' if slug else 'Message received by the local editorial inbox.'},status=201)

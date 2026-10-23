@@ -17,8 +17,8 @@ Python 3.12/3.13 and Node 22+ recommended. These commands do not reseed the supp
 
 ```sh
 cd backend
-python -m venv .venv
-.\venv\Scripts\Activate.ps1
+python3 -m venv .venv
+. .venv/bin/activate
 pip install -r requirements.txt
 # Review backend/.env.example; examples are NOT loaded automatically.
 export DJANGO_DEBUG=1
@@ -28,11 +28,11 @@ python manage.py runserver 127.0.0.1:8000
 
 ```sh
 cd frontend
-npm i
+npm ci
 npm run dev
 ```
 
-Open the Vite URL printed in the terminal. Its development proxy serves `/api` and `/media` from Django. Do not use Django's fallback homepage as the React preview. It remains available for legacy compatibility.
+Open the Vite URL printed in the terminal (normally http://localhost:5173). Its development proxy serves `/api`, `/media`, `/feed`, and `/sitemap.xml` from Django. Django's public page routes redirect to `FRONTEND_URL` in the default `PUBLIC_FRONTEND_MODE=react`; admin and API stay on Django. Set `PUBLIC_FRONTEND_MODE=legacy` explicitly to inspect the retained template site. Production Nginx serves the React build directly; it does not redirect through Vite. See `docs/FRONTEND_STABILIZATION.md` for Windows commands and verification boundaries.
 
 ## Handover documents
 

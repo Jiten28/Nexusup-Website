@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from .models import Article,Comment,ContactMessage
 
-@override_settings(DEBUG=True)
+@override_settings(DEBUG=True, PUBLIC_FRONTEND_MODE="legacy")
 class SiteTests(TestCase):
     @classmethod
     def setUpTestData(cls):

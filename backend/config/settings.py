@@ -84,7 +84,17 @@ LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','http://127.0.0.1:5000').rst
 TRANSLATION_TIMEOUT = env_int('TRANSLATION_TIMEOUT',15,1,60)
 
 # Portable origin, storage, database TLS and health settings.
-FRONTEND_URL = os.getenv('FRONTEND_URL', SITE_URL).rstrip('/')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173' if DEBUG else SITE_URL).rstrip('/')
+# React is canonical. The retained template application is an explicit compatibility mode.
+PUBLIC_FRONTEND_MODE = os.getenv('PUBLIC_FRONTEND_MODE', 'react')
+if PUBLIC_FRONTEND_MODE not in ('react', 'legacy'):
+    raise ImproperlyConfigured('PUBLIC_FRONTEND_MODE must be react or legacy.')
+from urllib.parse import urlsplit
+_frontend_origin = urlsplit(FRONTEND_URL)
+if (_frontend_origin.scheme not in (('http', 'https') if DEBUG else ('https',))
+        or not _frontend_origin.netloc or _frontend_origin.username or _frontend_origin.password
+        or _frontend_origin.path or _frontend_origin.query or _frontend_origin.fragment):
+    raise ImproperlyConfigured('FRONTEND_URL must be an HTTP(S) origin without credentials, path, query or fragment.')
 CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS','0') == '1'

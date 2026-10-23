@@ -17,7 +17,7 @@ from . import services,network
 RSS=b'''<?xml version="1.0"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title>QA Feed</title><item><title>Test India report</title><link>https://publisher.example/story?utm_source=rss&amp;x=1</link><guid>qa-1</guid><description>&lt;b&gt;Attributed excerpt&lt;/b&gt;</description><pubDate>Sun, 18 Oct 2026 05:00:00 GMT</pubDate><category>technology</category><media:content url="https://images.example/story.jpg" type="image/jpeg"/></item></channel></rss>'''
 ATOM=b'''<feed xmlns="http://www.w3.org/2005/Atom"><title>QA</title><entry><id>atom-1</id><title>Atom report</title><link href="https://publisher.example/atom"/><updated>2026-10-18T05:00:00Z</updated><summary>Atom summary</summary></entry></feed>'''
 
-@override_settings(DEBUG=True, NEWS_FETCH_ENABLED=True)
+@override_settings(DEBUG=True, NEWS_FETCH_ENABLED=True, PUBLIC_FRONTEND_MODE="legacy")
 class EnhancementTests(TestCase):
     @classmethod
     def setUpTestData(cls):
