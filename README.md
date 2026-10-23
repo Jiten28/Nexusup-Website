@@ -17,8 +17,8 @@ Python 3.12/3.13 and Node 22+ recommended. These commands do not reseed the supp
 
 ```sh
 cd backend
-python3 -m venv .venv
-. .venv/bin/activate
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 # Review backend/.env.example; examples are NOT loaded automatically.
 export DJANGO_DEBUG=1

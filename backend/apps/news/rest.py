@@ -1,5 +1,6 @@
 """Public read-only editorial API; write forms retain Django CSRF and moderation."""
 from django.db.models import Q
+from django.db.models.functions import Coalesce
 from django.db import connection
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
@@ -46,7 +47,7 @@ class Pagination(PageNumberPagination):
     page_size=12; page_size_query_param='page_size'; max_page_size=24
 
 def public(include_samples=False):
-    qs=Article.objects.published().select_related('category','author','source').prefetch_related('tags')
+    qs=Article.objects.published().select_related('category','author','source').prefetch_related('tags').order_by(Coalesce('source_published_at','published_at').desc(),'-id')
     # Retain labeled samples for sample-only installations, never rank them over real news.
     if not include_samples and qs.filter(is_sample=False).exists():
         qs=qs.filter(is_sample=False)

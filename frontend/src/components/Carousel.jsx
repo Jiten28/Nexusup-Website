@@ -1,23 +1,26 @@
 import React,{useState,useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {StoryImage} from './StoryCard';
+
+// Full-width, single-story slider matching the user's sketch. The separate
+// large-story/right-sidebar composition now lives in the latest-news grid.
 export default function Carousel({articles=[]}){
- const [index,setIndex]=useState(0),[playing,setPlaying]=useState(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches),[hovered,setHovered]=useState(false),[focused,setFocused]=useState(false),[visible,setVisible]=useState(!document.hidden);
- const [reduced,setReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
- const stories=Array.from(new Map(articles.map(a=>[a.id,a])).values()).slice(0,5),count=stories.length,active=count?index%count:0;
- const identity=stories.map(a=>a.id).join(',');
- // Reset the selected slide when the story list changes, but preserve the user's
- // autoplay preference. The previous setPlaying(false) here ran when API stories
- // first loaded and silently disabled autoplay on every normal page visit.
- useEffect(()=>{setIndex(0)},[identity]);
- useEffect(()=>{const media=matchMedia('(prefers-reduced-motion: reduce)'),change=()=>{setReduced(media.matches);if(media.matches)setPlaying(false)},visibility=()=>setVisible(!document.hidden);media.addEventListener('change',change);document.addEventListener('visibilitychange',visibility);return()=>{media.removeEventListener('change',change);document.removeEventListener('visibilitychange',visibility)}},[]);
- const paused=hovered||focused||!visible||reduced;
- useEffect(()=>{if(!playing||paused||count<2)return;const timer=setTimeout(()=>setIndex(i=>(i+1)%count),6000);return()=>clearTimeout(timer)},[playing,paused,count,index]);
- function go(value){setIndex((value+count)%count)}
- if(!count)return <section className="carousel carousel-empty" aria-label="Featured headlines"><span className="eyebrow">IN THE SPOTLIGHT</span><h2>Headlines, in focus</h2><p>No published headlines yet. Browse stored stories or enable the clearly labeled local demo preview.</p><Link to="/stories/">Browse stories ↗</Link></section>;
- return <section className="carousel" aria-label="Featured headlines" aria-roledescription="carousel" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocus={()=>setFocused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}} onKeyDown={e=>{if(e.key==='ArrowRight'){e.preventDefault();go(active+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(active-1)}}}>
-  <div className="section-head"><div><span className="eyebrow">IN THE SPOTLIGHT</span><h2>Headlines, in focus</h2></div><span className="carousel-counter" aria-live="off">{String(active+1).padStart(2,'0')} <span>/ {String(count).padStart(2,'0')}</span></span></div>
-  <div className="carousel-stage"><div className="carousel-feature">{stories.map((a,i)=><article key={a.id} hidden={i!==active} className="headline-slide" aria-roledescription="slide" aria-label={`${i+1} of ${count}`}><Link className="headline-image" to={`/story/${a.slug}/`} tabIndex={i===active?0:-1}><StoryImage article={a} eager={i===active}/></Link><div className="carousel-copy"><div className="headline-labels"><span className="category">{a.category.name}</span>{(a.is_preview||a.is_sample)&&<span className="sample">{a.is_preview?'Local preview':'Sample story'}</span>}</div><h3><Link to={`/story/${a.slug}/`}>{a.title}</Link></h3><p>{a.excerpt}</p><div className="headline-credit">{a.is_preview?'Illustrative editorial · not live reporting':a.source_name}</div><Link className="read-story" to={`/story/${a.slug}/`}>{a.is_preview?'Explore preview':'Read story'} <span aria-hidden="true">↗</span></Link></div></article>)}</div><aside className="carousel-side" aria-label="Other featured stories">{stories.map((story,i)=>i!==active&&<button className="carousel-side-story" key={story.id} onClick={()=>go(i)} aria-label={`Feature story: ${story.title}`}><span className="carousel-side-image"><StoryImage article={story}/></span><span className="carousel-side-copy"><span className="category">{story.category.name}</span><strong>{story.title}</strong><small>{story.source_name}</small></span></button>)}</aside></div>
-  <div className="carousel-bottom"><div className="slide-indicators" aria-label="Choose headline">{stories.map((a,i)=><button key={a.id} aria-label={`Go to headline ${i+1}`} aria-current={i===active?'true':undefined} onClick={()=>go(i)}><span aria-hidden="true"/></button>)}</div><small className="playback-note">{reduced?'Reduced motion · manual navigation':playing?(paused?'Autoplay paused during interaction':'Autoplay · every 6 seconds'):'Your pace. Your perspective.'}</small><div className="controls"><button aria-label="Previous headlines" disabled={count<2} onClick={()=>go(active-1)}>←</button><button aria-label={playing?'Pause carousel':'Play carousel'} aria-pressed={playing} disabled={reduced||count<2} onClick={()=>setPlaying(!playing)}>{playing?'Pause':'Play'}</button><button aria-label="Next headlines" disabled={count<2} onClick={()=>go(active+1)}>→</button></div></div>
+ const reducedMotion=typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const [index,setIndex]=useState(0),[playing,setPlaying]=useState(!reducedMotion),[visible,setVisible]=useState(typeof document==='undefined'||!document.hidden);
+ const stories=Array.from(new Map(articles.filter(Boolean).map(a=>[a.id,a])).values()).slice(0,6);
+ const count=stories.length,active=count?index%count:0;
+ useEffect(()=>{setIndex(0)},[stories.map(a=>a.id).join(',')]);
+ useEffect(()=>{const visibility=()=>setVisible(!document.hidden);document.addEventListener('visibilitychange',visibility);return()=>document.removeEventListener('visibilitychange',visibility)},[]);
+ useEffect(()=>{if(!playing||!visible||count<2)return;const timer=setInterval(()=>setIndex(i=>(i+1)%count),7500);return()=>clearInterval(timer)},[playing,visible,count,index]);
+ const go=n=>setIndex((n+count)%count);
+ if(!count)return <section className="carousel carousel-empty"><span className="eyebrow">LATEST HEADLINES</span><h2>News sliding animation</h2><p>Published headlines will appear here when available.</p></section>;
+ const a=stories[active];
+ return <section className="carousel sketch-slider" aria-label="Latest headlines" aria-roledescription="carousel">
+  <div className="slider-topline"><span className="eyebrow">LATEST HEADLINES</span><span className="carousel-counter">{String(active+1).padStart(2,'0')} <span>/ {String(count).padStart(2,'0')}</span></span></div>
+  <div className="sketch-slide" key={a.id}>
+   <Link className="sketch-slide-image" to={`/story/${a.slug}/`}><StoryImage article={a} eager /></Link>
+   <div className="sketch-slide-copy"><span className="category">{a.category?.name||'News'}</span><h2><Link to={`/story/${a.slug}/`}>{a.title}</Link></h2><p>{a.excerpt}</p><small>{a.source_name||'NexusUp'}{a.date?` · ${new Date(a.date).toLocaleDateString()}`:''}</small><Link className="read-story" to={`/story/${a.slug}/`}>Read story <span aria-hidden="true">↗</span></Link></div>
+  </div>
+  <div className="carousel-bottom"><div className="slide-indicators" aria-label="Choose headline">{stories.map((story,i)=><button key={story.id} aria-label={`Go to headline ${i+1}`} aria-current={i===active?'true':undefined} onClick={()=>go(i)}><span aria-hidden="true"/></button>)}</div><small className="playback-note">{playing?'Stories switch automatically':'Automatic sliding paused'}</small><div className="controls"><button aria-label="Previous headline" disabled={count<2} onClick={()=>go(active-1)}>←</button><button aria-label={playing?'Pause slider':'Play slider'} aria-pressed={playing} disabled={count<2} onClick={()=>setPlaying(v=>!v)}>{playing?'Pause':'Play'}</button><button aria-label="Next headline" disabled={count<2} onClick={()=>go(active+1)}>→</button></div></div>
  </section>
 }

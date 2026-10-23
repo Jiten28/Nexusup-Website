@@ -128,3 +128,11 @@ class TrustTests(TestCase):
         data=NewsAPIAdapter().fetch(s);self.assertEqual(data[0]['title'],'A source report');self.assertTrue(data[0]['published'].tzinfo)
         s.feed_url='https://untrusted.example/api'
         with self.assertRaises(ValueError):NewsAPIAdapter().fetch(s)
+
+    def test_articles_order_by_source_publication_date(self):
+        from datetime import timedelta
+        now=timezone.now()
+        older=Article.objects.create(title='Older source report',slug='older-source-report',category=Article.objects.first().category,author=Article.objects.first().author,excerpt='Older',body='Body',status='published',is_sample=False,published_at=now,source_published_at=now-timedelta(days=2),imported_at=now)
+        newer=Article.objects.create(title='Newer source report',slug='newer-source-report',category=older.category,author=older.author,excerpt='Newer',body='Body',status='published',is_sample=False,published_at=now-timedelta(days=1),source_published_at=now-timedelta(hours=1),imported_at=now)
+        ids=[x['id'] for x in self.client.get('/api/articles/').json()['results']]
+        self.assertLess(ids.index(newer.id),ids.index(older.id))
