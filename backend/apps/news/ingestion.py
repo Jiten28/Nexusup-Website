@@ -8,7 +8,8 @@ import feedparser
 from defusedxml.ElementTree import fromstring
 from django.utils import timezone
 from django.utils.text import slugify
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags, unescape
+from html.parser import HTMLParser
 from django.contrib.auth import get_user_model
 from django.db import transaction,IntegrityError
 from django.db.models import Q
@@ -39,6 +40,29 @@ def normalize_url(value):
         raise ValueError('Story URL exceeds the supported length')
     return normalized
 
+class _FeedImageParser(HTMLParser):
+    """Collect image candidates only from publisher-supplied feed HTML, never arbitrary pages."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True); self.urls=[]
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != 'img': return
+        attrs=dict(attrs)
+        value=attrs.get('src') or attrs.get('data-src') or ''
+        if value: self.urls.append(value.strip())
+
+def _feed_text(value, limit=None):
+    if isinstance(value, list):
+        value='\n\n'.join(str(x.get('value','')) for x in value if isinstance(x,dict))
+    raw=str(value or '')
+    raw=re.sub(r'(?i)<\s*br\s*/?\s*>', '\n', raw)
+    raw=re.sub(r'(?i)</\s*(?:p|div|li|h[1-6]|blockquote|article|section)\s*>', '\n\n', raw)
+    text=unescape(strip_tags(raw))
+    text=re.sub(r'\r\n?', '\n', text)
+    text=re.sub(r'[ \t]+', ' ', text)
+    text=re.sub(r'\n[ \t]+', '\n', text)
+    text=re.sub(r'\n{3,}', '\n\n', text).strip()
+    return text[:limit] if limit else text
+
 class RSSAdapter:
     def parse(self,body):
         self.stats = {"fetched": 0, "parsed": 0, "rejected": 0}
@@ -50,7 +74,7 @@ class RSSAdapter:
         rows=[]
         self.stats["fetched"] = min(len(parsed.entries), 100)
         for e in parsed.entries[:100]:
-            title=strip_tags(e.get('title','')).strip()[:220]
+            title=_feed_text(e.get('title',''),220)
             link=e.get('link','')
             if not title or not link:continue
             try:url=normalize_url(link)
@@ -60,13 +84,36 @@ class RSSAdapter:
             if parts:
                 try:stamp=datetime.fromtimestamp(calendar.timegm(parts),tz=dtzone.utc)
                 except (ValueError,OverflowError):pass
+            # RSS extensions and Atom enclosures vary. Prefer explicit image media, then
+            # image enclosures, then an image explicitly embedded in feed-provided HTML.
+            candidates=[]
+            for key in ('media_content','media_thumbnail','enclosures'):
+                for item in e.get(key,[]) or []:
+                    candidate=item.get('url') or item.get('href','')
+                    mime=(item.get('type') or '').lower()
+                    if candidate and (mime.startswith('image/') or key in ('media_content','media_thumbnail')):
+                        candidates.append(candidate)
+            feed_html='\n'.join(str(x.get('value','')) for x in (e.get('content') or []) if isinstance(x,dict))
+            if not feed_html: feed_html=str(e.get('summary','') or '')
+            image_parser=_FeedImageParser()
+            try:image_parser.feed(feed_html)
+            except Exception:pass
+            candidates.extend(image_parser.urls)
             image=''
-            for item in e.get('media_content',[])+e.get('media_thumbnail',[])+e.get('enclosures',[]):
-                candidate=item.get('url') or item.get('href','')
-                if candidate and (item.get('type','').startswith('image/') or 'media_' in str(e.keys())):
-                    image=candidate;break
-            rows.append({'title':title,'url':url,'excerpt':strip_tags(e.get('summary','')).strip()[:360],
-                         'published':stamp,'guid':str(e.get('id',''))[:255],'tags':[x.get('term','').lower() for x in e.get('tags',[])], 'image':image})
+            for candidate in candidates:
+                try:
+                    parsed_image=urlsplit(candidate)
+                    if parsed_image.scheme=='https' and parsed_image.hostname and not parsed_image.username and not parsed_image.password and len(candidate)<=1000:
+                        image=candidate;break
+                except (ValueError,AttributeError):continue
+            excerpt=_feed_text(e.get('summary',''),360)
+            content=_feed_text(e.get('content') or '')
+            # Avoid treating the short summary repeated in content:encoded as a full article.
+            if content and len(content) < len(excerpt): content=''
+            rows.append({'title':title,'url':url,'excerpt':excerpt,
+                         'content':content[:50000], 'published':stamp,'guid':str(e.get('id',''))[:255],
+                         'tags':[x.get('term','').lower() for x in e.get('tags',[])], 'image':image,
+                         'publisher':_feed_text(e.get('author',''),120)})
         self.stats["parsed"] = len(rows)
         self.stats["rejected"] = self.stats["fetched"] - len(rows)
         return rows
@@ -127,7 +174,7 @@ class NewsAPIAdapter:
                 except (ValueError,TypeError,AttributeError): pass
                 if stamp and stamp.tzinfo is None: stamp=stamp.replace(tzinfo=dtzone.utc)
                 source_data=e.get('source') if isinstance(e.get('source'),dict) else {}
-                rows.append(dict(title=title,url=url,excerpt=strip_tags(e.get('description') or '')[:360],published=stamp,guid='',tags=[],image=e.get('urlToImage') or '',publisher=strip_tags(source_data.get('name') if isinstance(source_data.get('name'),str) else '')[:120]))
+                rows.append(dict(title=title,url=url,excerpt=_feed_text(e.get('description') or '',360),content='',published=stamp,guid='',tags=[],image=e.get('urlToImage') or '',publisher=strip_tags(source_data.get('name') if isinstance(source_data.get('name'),str) else '')[:120]))
             total=data.get('totalResults')
             if len(data['articles']) < 100 or not isinstance(total,int) or self.stats['fetched'] >= total:
                 break
@@ -238,14 +285,14 @@ def ingest(source, dry_run=False):
                 image = ''
                 if current.allow_images and isinstance(row['image'], str) and row['image']:
                     parsed = urlsplit(row['image'])
-                    if parsed.scheme == 'https' and not parsed.username and not parsed.password and parsed.hostname in current.image_hosts:
+                    if parsed.scheme == 'https' and not parsed.username and not parsed.password and parsed.hostname and parsed.hostname.lower() in {h.lower() for h in current.image_hosts}:
                         image = row['image'][:1000]
                 publish = bool(current.trusted and current.auto_publish and row['published'] and row['published'] <= now)
                 try:
                     with transaction.atomic():
                         Article.objects.create(title=row['title'], slug=(slugify(row['title'])[:170] or 'news')+'-'+digest[:16],
                             category=cat, author=author, excerpt=row['excerpt'],
-                            body='Read the original publisher for the complete report. This entry contains feed metadata only.',
+                            body=(row.get('content') or '').strip() or 'Read the original publisher for the complete report. This entry contains feed metadata only.',
                             normalized_title_hash=title_hash, publisher_name=row.get('publisher',''), source=current,
                             canonical_source_url=row['url'], source_url_hash=digest, source_guid=row['guid'],
                             source_published_at=row['published'], published_at=row['published'] or now, imported_at=now,

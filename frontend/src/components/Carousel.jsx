@@ -6,7 +6,10 @@ export default function Carousel({articles=[]}){
  const [reduced,setReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
  const stories=Array.from(new Map(articles.map(a=>[a.id,a])).values()).slice(0,5),count=stories.length,active=count?index%count:0;
  const identity=stories.map(a=>a.id).join(',');
- useEffect(()=>{setIndex(0);setPlaying(false)},[identity]);
+ // Reset the selected slide when the story list changes, but preserve the user's
+ // autoplay preference. The previous setPlaying(false) here ran when API stories
+ // first loaded and silently disabled autoplay on every normal page visit.
+ useEffect(()=>{setIndex(0)},[identity]);
  useEffect(()=>{const media=matchMedia('(prefers-reduced-motion: reduce)'),change=()=>{setReduced(media.matches);if(media.matches)setPlaying(false)},visibility=()=>setVisible(!document.hidden);media.addEventListener('change',change);document.addEventListener('visibilitychange',visibility);return()=>{media.removeEventListener('change',change);document.removeEventListener('visibilitychange',visibility)}},[]);
  const paused=hovered||focused||!visible||reduced;
  useEffect(()=>{if(!playing||paused||count<2)return;const timer=setTimeout(()=>setIndex(i=>(i+1)%count),6000);return()=>clearTimeout(timer)},[playing,paused,count,index]);

@@ -27,7 +27,9 @@ class ArticleSerializer(serializers.ModelSerializer):
     reading_minutes=serializers.IntegerField(read_only=True)
     content_kind=serializers.SerializerMethodField()
     def get_content_kind(self,obj):
-        return 'feed_summary' if obj.source_id or obj.imported_at else 'editorial'
+        if not (obj.source_id or obj.imported_at): return 'editorial'
+        fallback='Read the original publisher for the complete report. This entry contains feed metadata only.'
+        return 'feed_content' if (obj.body or '').strip() and (obj.body or '').strip() != fallback else 'feed_summary'
     class Meta:
         model=Article
         fields=['id','title','slug','excerpt','category','tags','image','image_alt','image_credit','source_name','canonical_source_url','date','featured','is_sample','reading_minutes','content_kind']

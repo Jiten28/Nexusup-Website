@@ -59,12 +59,20 @@ class EnhancementTests(TestCase):
         self.assertEqual(normalize_url('https://PUBLISHER.example/story?utm_medium=x&b=2&a=1#top'),'https://publisher.example/story?a=1&b=2')
         for value in ['javascript:alert(1)','http://127.0.0.1/','https://localhost/','https://user:pw@host.example/','https://host.example:8000/']:
             with self.assertRaises(ValueError):normalize_url(value)
-    def test_rss_atom_and_no_full_article(self):
+    def test_rss_atom_and_no_full_article_scraping(self):
         row=RSSAdapter().parse(RSS)[0]
         self.assertEqual(row['excerpt'],'Attributed excerpt')
         self.assertEqual(row['published'].year,2026)
+        self.assertEqual(row['image'],'https://images.example/story.jpg')
         self.assertEqual(RSSAdapter().parse(ATOM)[0]['url'],'https://publisher.example/atom')
         with self.assertRaises(Exception):RSSAdapter().parse(b'<!DOCTYPE a [<!ENTITY x "bad">]><a>&x;</a>')
+
+    def test_rss_extracts_publisher_supplied_content_and_embedded_image(self):
+        body=b'''<?xml version="1.0"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>QA</title><item><title>Rich report</title><link>https://publisher.example/rich</link><description>Short summary</description><content:encoded><![CDATA[<p>Full permitted feed text.</p><p>Second paragraph.</p><img src="https://cdn.publisher.example/photo.webp" />]]></content:encoded></item></channel></rss>'''
+        row=RSSAdapter().parse(body)[0]
+        self.assertIn('Full permitted feed text.',row['content'])
+        self.assertIn('Second paragraph.',row['content'])
+        self.assertEqual(row['image'],'https://cdn.publisher.example/photo.webp')
     @patch('apps.news.ingestion.fetch_bytes',return_value=RSS)
     def test_dedup_review_image_permissions_and_feature_preserved(self,fetch):
         featured=list(Article.objects.filter(featured=True).values_list('pk',flat=True))
@@ -77,6 +85,16 @@ class EnhancementTests(TestCase):
         self.assertEqual(featured,list(Article.objects.filter(featured=True).values_list('pk',flat=True)))
         self.ready();self.assertEqual(ingest(self.source)['skipped'],1)
         self.assertEqual(Article.objects.filter(source=self.source).count(),1)
+    @patch('apps.news.ingestion.fetch_bytes',return_value=b'''<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>QA</title><item><title>Rich report content</title><link>https://publisher.example/rich-content</link><description>Short summary</description><content:encoded><![CDATA[<p>Publisher supplied full text.</p><p>Second paragraph.</p>]]></content:encoded></item></channel></rss>''')
+    def test_ingestion_preserves_publisher_supplied_feed_content(self,fetch):
+        self.source.auto_publish=False;self.source.trusted=False;self.source.save()
+        result=ingest(self.source)
+        article=Article.objects.get(source=self.source,title='Rich report content')
+        self.assertEqual(result['imported'],1)
+        self.assertIn('Publisher supplied full text.',article.body)
+        self.assertIn('Second paragraph.',article.body)
+        self.assertEqual(article.status,'draft')
+
     @patch('apps.news.ingestion.fetch_bytes',return_value=RSS)
     def test_category_map_and_permitted_image(self,fetch):
         self.source.category_map={'technology':'technology'};self.source.allow_images=True

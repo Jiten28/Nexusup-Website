@@ -70,6 +70,15 @@ class NewsDiscoveryTests(TestCase):
         self.assertIsNotNone(data['date'])
         article.remote_image_url='';article.save()
         self.assertEqual(self.client.get(f'/api/articles/{article.slug}/').json()['image'],'')
+    def test_publisher_feed_content_is_distinguished_from_metadata_summary(self):
+        source=NewsSource.objects.create(name='Content fixture publisher',feed_url='https://publisher.example/rss',default_category=Category.objects.first())
+        full=self.real_article(slug='feed-content',source=source,body='Publisher-supplied paragraph one.\n\nPublisher-supplied paragraph two.')
+        summary=self.real_article(slug='feed-summary',source=source,body='Read the original publisher for the complete report. This entry contains feed metadata only.')
+        full_data=self.client.get(f'/api/articles/{full.slug}/').json()
+        summary_data=self.client.get(f'/api/articles/{summary.slug}/').json()
+        self.assertEqual(full_data['content_kind'],'feed_content')
+        self.assertEqual(summary_data['content_kind'],'feed_summary')
+
     def test_related_does_not_mix_sample_and_real_stories(self):
         first=self.real_article();other=self.real_article(slug='real-second')
         data=self.client.get(f'/api/articles/{first.slug}/related/').json()['results']
