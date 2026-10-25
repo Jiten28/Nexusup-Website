@@ -5,3 +5,8 @@ feedparser==6.0.14
 defusedxml==0.7.1
 whitenoise==6.12.0
 python-dotenv==1.2.2
+# MariaDB driver. Pure Python, so it installs on Windows and macOS without a compiler.
+# (On a Linux server you may use `mysqlclient` instead; the code picks whichever is installed.)
+PyMySQL==1.1.1
+cryptography>=43
+# Optional S3 media storage: pip install django-storages boto3

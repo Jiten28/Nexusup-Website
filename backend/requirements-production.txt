@@ -1,5 +1,0 @@
--r requirements.txt
-mysqlclient>=2.2.7,<3
-gunicorn>=23,<24
-# Optional object storage: install requirements-storage.txt only when configured.
-redis>=5,<7

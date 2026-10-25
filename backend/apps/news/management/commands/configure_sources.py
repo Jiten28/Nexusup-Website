@@ -17,7 +17,7 @@ BBC_FEEDS=[('BBC News \u2014 India','india','https://feeds.bbci.co.uk/news/world
  ('BBC News \u2014 Politics','politics','https://feeds.bbci.co.uk/news/politics/rss.xml'),
  ('BBC Sport','sports','https://feeds.bbci.co.uk/sport/rss.xml'),
  ('BBC Sport \u2014 Cricket','cricket','https://feeds.bbci.co.uk/sport/cricket/rss.xml')]
-# NewsAPI: DEVELOPMENT/TESTING ONLY on the free plan (see docs/NEWS_COVERAGE_AND_FETCHING.md).
+# NewsAPI: DEVELOPMENT/TESTING ONLY on the free plan (see docs/NEWS.md).
 NEWSAPI_FEEDS=[('NewsAPI \u2014 Stock market','stock-market','https://newsapi.org/v2/everything?q=%22stock+market%22&language=en&sortBy=publishedAt'),
  ('NewsAPI \u2014 Investments','investments','https://newsapi.org/v2/everything?q=investing&language=en&sortBy=publishedAt'),
  ('NewsAPI \u2014 India business headlines','business','https://newsapi.org/v2/top-headlines?country=in&category=business')]

@@ -1,17 +1,32 @@
 import {read,save} from './preferences.js';
-// Every palette has separate light/dark surfaces. Palette changes never change mode.
-const palette=(id,name,light,dark)=>({id,name,light,dark});
-const tokens=(bg,surface,text,muted,line,accent,soft,ink)=>({'--bg':bg,'--surface':surface,'--text':text,'--muted':muted,'--line':line,'--accent':accent,'--accent-soft':soft,'--on-accent':ink});
+// Six bold palettes. Each has its own light and dark surfaces, and a second "spark" colour
+// (--accent-2) used for gradients. Picking a palette never changes the colour mode.
+const tokens=(bg,surface,text,muted,line,accent,soft,ink,accent2)=>({'--bg':bg,'--surface':surface,'--text':text,'--muted':muted,'--line':line,'--accent':accent,'--accent-soft':soft,'--on-accent':ink,'--accent-2':accent2});
 export const themes=[
- palette('midnight-coral','Midnight Coral',tokens('#faf4f1','#fffcfa','#29242d','#6d555d','#b59b9f','#ad3434','#f9e4df','#ffffff'),tokens('#171d29','#222b3b','#f8efeb','#c7b8bc','#758296','#ffaaa0','#3c303d','#211b24')),
- palette('ocean-editorial','Ocean Editorial',tokens('#f0f6f7','#fbfefe','#172f3c','#486571','#97b0b9','#126078','#deeff3','#ffffff'),tokens('#101f2b','#192c3a','#edf7fa','#afc7d3','#6f8b9c','#84d8ee','#203e50','#102730')),
- palette('violet-night','Violet Night',tokens('#f5f2fa','#fefcff','#2d2442','#66567e','#b2a0c4','#713ba5','#eee3f8','#ffffff'),tokens('#201a2c','#2c243b','#f6efff','#c8b8de','#8a7b9e','#d0acff','#403054','#271c39')),
- palette('emerald-press','Emerald Press',tokens('#f0f6f1','#fbfefb','#1e342c','#4d695d','#97b0a0','#15664c','#dfefe5','#ffffff'),tokens('#14251f','#1d332a','#eff9f1','#afcdbb','#719780','#88dfb1','#284938','#102d20')),
- palette('sunset-journal','Sunset Journal',tokens('#fcf4eb','#fffdf8','#3c2b22','#765d48','#bfa48c','#a64320','#fae5d2','#ffffff'),tokens('#2b201d','#392b24','#fff3e7','#d6bcaa','#a08673','#ffb080','#51372a','#362013')),
- palette('graphite-gold','Graphite Gold',tokens('#f6f5f0','#fefdf9','#30302c','#666455','#aeaa94','#80600b','#f2e9c9','#ffffff'),tokens('#20211f','#2c2d29','#f6f4e8','#c4c3b1','#8a8c78','#e7c86c','#45412b','#29250f')),
+ {id:'royal-indigo',name:'Royal Indigo',
+  light:tokens('#f1f2fb','#ffffff','#14173a','#464b78','#c3c8ea','#3733c9','#e4e6fb','#ffffff','#ff5a5f'),
+  dark:tokens('#0c0f2e','#151943','#f0f1ff','#b6bbf0','#3a4090','#98a3ff','#232a68','#0c0f2e','#ff8a8e')},
+ {id:'crimson-ember',name:'Crimson Ember',
+  light:tokens('#fbf1f0','#ffffff','#26141a','#68474f','#e0b8be','#b8152c','#fbe1e4','#ffffff','#f59e0b'),
+  dark:tokens('#170c0f','#25131a','#fff1f2','#e4bbc2','#6b3440','#ff8494','#3e1c25','#170c0f','#ffc15e')},
+ {id:'teal-wave',name:'Teal Wave',
+  light:tokens('#ecf7f7','#ffffff','#0a2a2d','#3a6065','#add6d8','#05707a','#d5eff0','#ffffff','#ff7a45'),
+  dark:tokens('#061b1e','#0d292d','#e9fbfb','#a6d2d5','#2b5d62','#45e3d3','#12403f','#052123','#ff9d72')},
+ {id:'forest-lime',name:'Forest Lime',
+  light:tokens('#eff7ea','#ffffff','#13270e','#43603a','#b5d3a8','#2b7516','#dcf0d0','#ffffff','#c99700'),
+  dark:tokens('#0d190a','#15250e','#eefce8','#b5d5aa','#3a5c2e','#92e460','#25401a','#0d190a','#e8c43a')},
+ {id:'amber-sunrise',name:'Amber Sunrise',
+  light:tokens('#fff4e4','#ffffff','#2c1b05','#6f5128','#e4c898','#a94d05','#fde4bd','#ffffff','#7c3aed'),
+  dark:tokens('#1b1104','#2a1c08','#fff4e0','#e5cb9c','#6b4c1c','#ffbb52','#4a3210','#1b1104','#c4a1ff')},
+ {id:'rose-magenta',name:'Rose Magenta',
+  light:tokens('#fdeff6','#ffffff','#29101f','#6c3a57','#e3b5d0','#a8106a','#fadaea','#ffffff','#0e9a9a'),
+  dark:tokens('#1a0914','#2a111f','#ffeef7','#eab9d5','#6e2f55','#ff7ac4','#4a1c37','#1a0914','#4fe0e0')},
 ];
-const aliases={ocean:'ocean-editorial',violet:'violet-night',emerald:'emerald-press',sunset:'sunset-journal'};
+// Old palette ids (earlier releases) map onto the new set so saved choices keep working.
+const aliases={'midnight-coral':'crimson-ember','ocean-editorial':'teal-wave','violet-night':'royal-indigo','emerald-press':'forest-lime','sunset-journal':'amber-sunrise','graphite-gold':'amber-sunrise',ocean:'teal-wave',violet:'royal-indigo',emerald:'forest-lime',sunset:'amber-sunrise'};
+export const MODES=['light','dark','auto'];
 export function resolveTheme(id){return themes.find(t=>t.id===(aliases[id]||id))||themes[0]}
+export function resolveMode(mode,prefersDark){return mode==='dark'||(mode==='auto'&&prefersDark)?'dark':'light'}
 export function shuffleCycle(current,random=Math.random){
  const ids=themes.map(t=>t.id);
  for(let i=ids.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
@@ -28,4 +43,12 @@ export function nextTheme(current){
  const next=advanceTheme(current,stored?.current===current&&Array.isArray(stored.remaining)?stored.remaining:[]);
  save('nexusup-theme-cycle',JSON.stringify({current:next.id,remaining:next.remaining}));return next.id;
 }
-export function applyTheme(id,mode){const root=document.documentElement;const theme=resolveTheme(id);root.dataset.palette=theme.id;root.dataset.theme=mode;for(const [key,value]of Object.entries(theme[mode==='dark'?'dark':'light']))root.style.setProperty(key,value);root.style.colorScheme=mode==='dark'?'dark':'light'}
+// mode: 'light' | 'dark' | 'auto' (follow the device). dataset.mode keeps the user's choice.
+export function applyTheme(id,mode){
+ const root=document.documentElement,theme=resolveTheme(id);
+ const prefersDark=typeof matchMedia==='function'&&matchMedia('(prefers-color-scheme: dark)').matches;
+ const actual=resolveMode(mode,prefersDark);
+ root.dataset.palette=theme.id;root.dataset.theme=actual;root.dataset.mode=mode;
+ for(const [key,value] of Object.entries(theme[actual]))root.style.setProperty(key,value);
+ root.style.colorScheme=actual;
+}

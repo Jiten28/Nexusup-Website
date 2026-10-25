@@ -1,7 +1,6 @@
 .env
 .env.*
 !.env.example
-!.env.production.example
 *.pem
 *.key
 __pycache__/
@@ -9,12 +8,8 @@ __pycache__/
 .venv/
 node_modules/
 dist/
+dist-sandbox/
 staticfiles/
 *.log
 *.sqlite3
-!backend/demo.sqlite3
-# Keep supplied reference media; ignore new private runtime uploads via deployment storage.
 coverage/
-
-# Separate opt-in client-demo build; never the normal deployment output.
-frontend/dist-demo/

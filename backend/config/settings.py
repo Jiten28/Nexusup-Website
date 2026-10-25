@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
+from . import USING_PYMYSQL
 from .environment import load_project_environment
 load_project_environment(BASE_DIR / '.env')
 
@@ -34,10 +35,10 @@ TEMPLATES = [{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS'
 WSGI_APPLICATION = 'config.wsgi.application'
 DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')
 if DB_ENGINE == 'mariadb':
-    required = ['DB_NAME','DB_USER','DB_PASSWORD','DB_HOST']
+    required = ['DB_NAME','DB_USER','DB_PASSWORD']
     if any(not os.getenv(key) for key in required):
-        raise ImproperlyConfigured('MariaDB requires DB_NAME, DB_USER, DB_PASSWORD and DB_HOST.')
-    DATABASES = {'default':{'ENGINE':'django.db.backends.mysql','NAME':os.environ['DB_NAME'],'USER':os.environ['DB_USER'],'PASSWORD':os.environ['DB_PASSWORD'],'HOST':os.environ['DB_HOST'],'PORT':os.getenv('DB_PORT','3306'),'CONN_MAX_AGE':env_int('DB_CONN_MAX_AGE',60,0,3600),'OPTIONS':{'charset':'utf8mb4','init_command':"SET sql_mode='STRICT_TRANS_TABLES'",'isolation_level':'read committed','connect_timeout':env_int('DB_CONNECT_TIMEOUT',10,1,120),'read_timeout':env_int('DB_READ_TIMEOUT',30,1,600),'write_timeout':env_int('DB_WRITE_TIMEOUT',30,1,600)}}}
+        raise ImproperlyConfigured('MariaDB requires DB_NAME, DB_USER and DB_PASSWORD (see backend/.env.example).')
+    DATABASES = {'default':{'ENGINE':'django.db.backends.mysql','NAME':os.environ['DB_NAME'],'USER':os.environ['DB_USER'],'PASSWORD':os.environ['DB_PASSWORD'],'HOST':os.getenv('DB_HOST') or '127.0.0.1','PORT':os.getenv('DB_PORT','3306'),'CONN_MAX_AGE':env_int('DB_CONN_MAX_AGE',60,0,3600),'OPTIONS':{'charset':'utf8mb4','init_command':"SET sql_mode='STRICT_TRANS_TABLES'",'isolation_level':'read committed','connect_timeout':env_int('DB_CONNECT_TIMEOUT',10,1,120),'read_timeout':env_int('DB_READ_TIMEOUT',30,1,600),'write_timeout':env_int('DB_WRITE_TIMEOUT',30,1,600)}}}
 elif DB_ENGINE == 'sqlite' and DEBUG:
     DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME':Path(os.getenv('SQLITE_PATH') or BASE_DIR/'demo.sqlite3')}}
 else:
@@ -116,7 +117,7 @@ if DB_ENGINE == 'mariadb':
             raise ImproperlyConfigured(f'{key} must name a readable certificate file.')
     if ssl_options:
         DATABASES['default']['OPTIONS']['ssl'] = ssl_options
-        if os.getenv('DB_SSL_CA'): DATABASES['default']['OPTIONS']['ssl_mode'] = 'VERIFY_IDENTITY'
+        if os.getenv('DB_SSL_CA') and not USING_PYMYSQL: DATABASES['default']['OPTIONS']['ssl_mode'] = 'VERIFY_IDENTITY'
 if not DEBUG and not os.getenv('DJANGO_ALLOWED_HOSTS'):
     raise ImproperlyConfigured('Set explicit DJANGO_ALLOWED_HOSTS in production.')
 if not DEBUG and (len(SECRET_KEY)<50 or SECRET_KEY.startswith(('local-demo','REPLACE_'))):

@@ -5,16 +5,15 @@ import Widgets from './components/Widgets';
 import {Home,Listing,Story,Info,visibleCategories} from './pages/NewsPages';
 import {Translation} from './context/Translation';
 import {read,save} from './services/preferences';
-import {resolveTheme,nextTheme,applyTheme} from './services/themes';
-import {previewEnabled} from './preview/data';
+import {themes,MODES,resolveTheme,applyTheme} from './services/themes';
 function Header({categories}){
- const t=useContext(Translation);const [mode,setMode]=useState(()=>read('nexusup-theme',matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+ const t=useContext(Translation);const [mode,setMode]=useState(()=>{const m=read('nexusup-theme','auto');return MODES.includes(m)?m:'auto'});
  const [palette,setPalette]=useState(()=>resolveTheme(read('nexusup-palette','midnight-coral')).id),[time,setTime]=useState(new Date()),[menu,setMenu]=useState(false),[search,setSearch]=useState('');const nav=useNavigate(),loc=useLocation();
- useEffect(()=>{applyTheme(palette,mode);save('nexusup-theme',mode);save('nexusup-palette',palette)},[mode,palette]);
+ useEffect(()=>{applyTheme(palette,mode);save('nexusup-theme',mode);save('nexusup-palette',palette);if(mode!=='auto'||typeof matchMedia!=='function')return;const q=matchMedia('(prefers-color-scheme: dark)'),f=()=>applyTheme(palette,'auto');q.addEventListener('change',f);return()=>q.removeEventListener('change',f)},[mode,palette]);
  useEffect(()=>{const timer=setInterval(()=>setTime(new Date()),1000);return()=>clearInterval(timer)},[]);
  useEffect(()=>{setMenu(false)},[loc.pathname]);
  return <header><div className="topline wrap"><span>{t('ui:tagline','More perspective. Less noise.')}</span><span><span id="location-name">{t('ui:local_time','Your local time')}</span> · <time>{time.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time></span></div>
- <div className="brand-row wrap"><Link to="/" className="brand"><img src="/book.webp" alt=""/>NexusUp<span>.</span></Link><div className="header-tools"><button aria-label="Toggle light and dark mode" onClick={()=>setMode(mode==='dark'?'light':'dark')}>{mode==='dark'?t('ui:light_mode','Light mode'):t('ui:dark_mode','Dark mode')}</button><div className="theme-switch"><button aria-describedby="theme-name" onClick={()=>setPalette(current=>nextTheme(current))}><span className="theme-dot" aria-hidden="true"/>{t('ui:color_theme','Color Theme')}</button><small id="theme-name" aria-live="polite">{resolveTheme(palette).name}</small></div><Widgets/></div></div>
+ <div className="brand-row wrap"><Link to="/" className="brand"><img src="/book.webp" alt=""/>NexusUp<span>.</span></Link><div className="header-tools"><div className="mode-switch" role="group" aria-label="Colour mode">{MODES.map(m=><button key={m} aria-pressed={mode===m} onClick={()=>setMode(m)}><span aria-hidden="true">{m==='light'?'☀':m==='dark'?'☾':'◎'}</span>{t(`ui:mode_${m}`,m[0].toUpperCase()+m.slice(1))}</button>)}</div><details className="header-popover palette-picker"><summary><span className="theme-dot" aria-hidden="true"/>{t('ui:color_theme','Color Theme')}<small>{resolveTheme(palette).name}</small></summary><div className="popover" role="group" aria-label="Colour theme">{themes.map(th=><button key={th.id} aria-pressed={palette===th.id} onClick={e=>{setPalette(th.id);e.currentTarget.closest('details').open=false}}><span className="swatch" aria-hidden="true" style={{background:`linear-gradient(135deg,${th.light['--accent']} 50%,${th.light['--accent-2']} 50%)`}}/>{th.name}</button>)}</div></details><Widgets/></div></div>
  <div className="nav-border"><div className="wrap nav-row"><button className="mobile-toggle" aria-expanded={menu} onClick={()=>setMenu(!menu)} onKeyDown={e=>{if(e.key==='Escape')setMenu(false)}}>{t('ui:menu','Menu')}</button><nav className={menu?'open':''} aria-label="Main navigation"><Link to="/">{t('ui:home','Home')}</Link><Link to="/stories/">{t('ui:blogs','All stories')}</Link>{visibleCategories(categories).map(c=><Link key={c.id} to={`/category/${c.slug}/`}>{t(`category:${c.id}`,c.name)}</Link>)}</nav><form className="search" role="search" onSubmit={e=>{e.preventDefault();nav(`/search/?q=${encodeURIComponent(search)}`)}}><label className="sr-only" htmlFor="search">Search stories</label><input id="search" placeholder={t('ui:search_placeholder','Find a fresh perspective…')} value={search} maxLength="120" onChange={e=>setSearch(e.target.value)}/><button aria-label="Search">↗</button></form></div></div></header>
 }
 const RTL=['ar','he','fa','ur'];
@@ -23,7 +22,7 @@ function Language({setTexts}){
  const [languages,setLanguages]=useState([]),[selected,setSelected]=useState(()=>read('nexusup-language','en')),[note,setNote]=useState(''),[busy,setBusy]=useState(false);
  const reset=()=>{setTexts({});document.documentElement.lang='en';document.documentElement.dir='ltr'};
  // The language list is loaded once on page load, so the dropdown is ready before it is opened.
- useEffect(()=>{let live=true;(async()=>{if(previewEnabled){setNote('Original English · translation is off for this demo.');return}try{const d=await api('/api/languages/');if(live)setLanguages(d.languages)}catch(e){if(live){setNote('Original English · translation is not configured on this server.');setSelected('en')}}})();return()=>{live=false}},[]);
+ useEffect(()=>{let live=true;(async()=>{try{const d=await api('/api/languages/');if(live)setLanguages(d.languages)}catch(e){if(live){setNote('Original English · translation is not configured on this server.');setSelected('en')}}})();return()=>{live=false}},[]);
  async function apply(language){
   if(language==='en'){reset();return}
   setBusy(true);

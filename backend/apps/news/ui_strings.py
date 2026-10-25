@@ -5,6 +5,9 @@ ever translates this fixed list plus public article text, never client-supplied 
 ``frontend/tests/ui-strings.test.js`` fails if the React code uses a key missing here.
 """
 UI_STRINGS = {
+    'ui:mode_light': 'Light',
+    'ui:mode_dark': 'Dark',
+    'ui:mode_auto': 'Auto',
     'ui:home': 'Home',
     'ui:blogs': 'All stories',
     'ui:latest': 'Latest news',

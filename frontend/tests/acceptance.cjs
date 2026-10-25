@@ -169,7 +169,7 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
   await Promise.all([
     timing('slider: autoplay advances once per interval', async p => { await p.waitForTimeout(7600); assert.equal(await counter(p), '02 / 04'); await p.waitForTimeout(7000); assert.equal(await counter(p), '03 / 04'); }),
     timing('slider: Pause stops autoplay and Play label toggles', async p => {
-      const b = p.locator('button[aria-pressed]').first(); assert.equal(await b.getAttribute('aria-label'), 'Pause slider'); await b.click();
+      const b = p.locator('button[aria-label$="slider"]'); assert.equal(await b.getAttribute('aria-label'), 'Pause slider'); await b.click();
       assert.equal(await b.getAttribute('aria-label'), 'Play slider'); await p.mouse.move(0, 0); await p.waitForTimeout(8000); assert.equal(await counter(p), '01 / 04'); }),
     timing('slider: rapid manual clicks never create duplicate timers', async p => {
       for (let i = 0; i < 3; i++) await p.locator('button[aria-label="Next headline"]').click(); assert.equal(await counter(p), '04 / 04');
@@ -222,6 +222,33 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
     assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
     await page.evaluate(() => localStorage.removeItem('nexusup-language'));
   });
+  // ---------- Colour themes ----------
+  await run('themes: Light / Dark / Auto switch and six palettes work and are remembered', async () => {
+    const r = await newPage(browser); await home(r.page); const p = r.page;
+    const st = () => p.evaluate(() => ({theme: document.documentElement.dataset.theme, mode: document.documentElement.dataset.mode, palette: document.documentElement.dataset.palette, accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), bg: getComputedStyle(document.body).backgroundColor}));
+    assert.deepEqual(await p.locator('.mode-switch button').allInnerTexts().then(a => a.map(x => x.replace(/[^A-Za-z]/g, ''))), ['Light', 'Dark', 'Auto']);
+    await p.locator('.mode-switch button', {hasText: 'Dark'}).click(); let a = await st(); assert.equal(a.theme, 'dark'); assert.equal(a.mode, 'dark');
+    await p.locator('.mode-switch button', {hasText: 'Light'}).click(); a = await st(); assert.equal(a.theme, 'light');
+    await p.locator('.palette-picker summary').click(); const names = await p.locator('.palette-picker .popover button').allInnerTexts(); assert.equal(names.length, 6); assert.equal(new Set(names).size, 6);
+    const accents = new Set();
+    for (let i = 0; i < 6; i++) { await p.evaluate(() => { document.querySelector('.palette-picker').open = true; }); await p.locator('.palette-picker .popover button').nth(i).click(); const s1 = await st(); accents.add(s1.accent); assert.equal(s1.theme, 'light', 'palette change keeps the mode'); }
+    assert.equal(accents.size, 6, 'every palette has its own accent');
+    await p.reload(); await p.waitForSelector('.slider-slide'); a = await st(); assert.equal(a.palette, 'rose-magenta', 'palette remembered'); assert.equal(a.mode, 'light');
+    await r.context.close();
+    const d = await newPage(browser); await d.context.close();
+  });
+  await run('themes: Auto follows the device colour scheme', async () => {
+    const ctx = await browser.newContext({colorScheme: 'dark', viewport: {width: 1200, height: 800}}); const p = await ctx.newPage();
+    await ctx.route('**/*', route => { const u = new URL(route.request().url()); if (u.origin === new URL(base).origin && !u.pathname.startsWith('/api/')) return route.continue(); if (u.pathname.startsWith('/api/')) { const h = mockApi(build())(u, 'GET'); return route.fulfill({json: h}); } return route.abort(); });
+    await p.goto(base + '/'); await p.waitForSelector('.slider-slide');
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), 'dark'); assert.equal(await p.evaluate(() => document.documentElement.dataset.mode), 'auto');
+    await p.emulateMedia({colorScheme: 'light'}); await p.waitForFunction(() => document.documentElement.dataset.theme === 'light');
+    await ctx.close();
+  });
+  for (const [pal, mode] of [['royal-indigo', 'light'], ['crimson-ember', 'dark'], ['teal-wave', 'light'], ['forest-lime', 'dark'], ['amber-sunrise', 'light'], ['rose-magenta', 'dark']]) {
+    const r = await newPage(browser, {width: 1440, height: 900}); await r.page.addInitScript(([pal, mode]) => { localStorage.setItem('nexusup-palette', pal); localStorage.setItem('nexusup-theme', mode); }, [pal, mode]);
+    await home(r.page); await r.page.waitForTimeout(700); await r.page.screenshot({path: `${out}/theme-${pal}-${mode}.png`, clip: {x: 0, y: 0, width: 1440, height: 900}, animations: 'disabled'}); await r.context.close();
+  }
   await run('no uncaught page errors', async () => assert.deepEqual(pageErrors, []));
 
   // ---------- Screenshots at other widths ----------
