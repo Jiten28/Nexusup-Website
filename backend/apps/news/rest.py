@@ -1,5 +1,5 @@
 """Public read-only editorial API; write forms retain Django CSRF and moderation."""
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.functions import Coalesce
 from django.db import connection
 from django.http import JsonResponse
@@ -46,8 +46,10 @@ class DetailSerializer(ArticleSerializer):
 class Pagination(PageNumberPagination):
     page_size=12; page_size_query_param='page_size'; max_page_size=24
 
-def public(include_samples=False):
-    qs=Article.objects.published().select_related('category','author','source').prefetch_related('tags').order_by(Coalesce('source_published_at','published_at').desc(),'-id')
+def public(include_samples=False,light=False):
+    qs=Article.objects.published()
+    if not light:qs=qs.select_related('category','author','source').prefetch_related('tags')
+    qs=qs.order_by(Coalesce('source_published_at','published_at').desc(),'-id')
     # Retain labeled samples for sample-only installations, never rank them over real news.
     if not include_samples and qs.filter(is_sample=False).exists():
         qs=qs.filter(is_sample=False)
@@ -66,8 +68,20 @@ class ArticleList(generics.ListAPIView):
 class ArticleDetail(generics.RetrieveAPIView):
     serializer_class=DetailSerializer; lookup_field='slug'
     def get_queryset(self):return public(include_samples=True)
+class CategoryListSerializer(CategorySerializer):
+    # Number of publicly visible stories, so the UI can hide empty categories instead of
+    # linking to pages that can only say "No stories yet".
+    article_count=serializers.SerializerMethodField()
+    class Meta(CategorySerializer.Meta):
+        fields=CategorySerializer.Meta.fields+['article_count']
+    def get_article_count(self,obj):return self.context.get('counts',{}).get(obj.pk,0)
 class Categories(generics.ListAPIView):
-    queryset=Category.objects.all(); serializer_class=CategorySerializer
+    queryset=Category.objects.all(); serializer_class=CategoryListSerializer
+    def get_serializer_context(self):
+        context=super().get_serializer_context()
+        rows=public(light=True).order_by().values('category_id').annotate(n=Count('id'))
+        context['counts']={r['category_id']:r['n'] for r in rows}
+        return context
 class Tags(generics.ListAPIView):
     queryset=Tag.objects.all(); serializer_class=TagSerializer
 @require_GET

@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.urls import resolve,Resolver404
 from . import services
 from .models import Article,Category
+from .ui_strings import UI_STRINGS
 
 def unavailable(exc):
     # Only deliberate validation/status text is returned, never raw HTTP/provider exceptions or keys.
@@ -38,9 +39,10 @@ def translation_payload(path):
     try:match=resolve(parsed.path)
     except Resolver404:raise ValueError('Unknown public page')
     if match.url_name not in ['home','stories','search','category','article','about','privacy','terms','contact']:raise ValueError('Page cannot be translated')
-    payload={'ui:home':'Home','ui:blogs':'All stories','ui:latest':'Latest news','ui:explore':'Explore every perspective','ui:read':'Read story','ui:sample':'Sample story','ui:all':'All'}
+    payload=dict(UI_STRINGS)
     for c in Category.objects.all():payload[f'category:{c.pk}']=c.name
-    posts=Article.objects.published().select_related('category','author','source')
+    from .rest import public
+    posts=public(include_samples=match.url_name=='article')
     if match.url_name=='article':posts=posts.filter(slug=match.kwargs['slug'])
     elif match.url_name=='category':posts=posts.filter(category__slug=match.kwargs['slug'])
     for post in posts[:24]:

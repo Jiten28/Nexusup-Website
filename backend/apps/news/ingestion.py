@@ -16,6 +16,7 @@ from django.db.models import Q
 from urllib.error import HTTPError, URLError
 from .models import Article,Category,FetchRun,NewsSource
 from .network import fetch_bytes
+from .images import best_candidate, approved_remote_image
 
 logger = logging.getLogger(__name__)
 
@@ -92,20 +93,15 @@ class RSSAdapter:
                     candidate=item.get('url') or item.get('href','')
                     mime=(item.get('type') or '').lower()
                     if candidate and (mime.startswith('image/') or key in ('media_content','media_thumbnail')):
-                        candidates.append(candidate)
+                        candidates.append((candidate,item.get('width')))
             feed_html='\n'.join(str(x.get('value','')) for x in (e.get('content') or []) if isinstance(x,dict))
             if not feed_html: feed_html=str(e.get('summary','') or '')
             image_parser=_FeedImageParser()
             try:image_parser.feed(feed_html)
             except Exception:pass
-            candidates.extend(image_parser.urls)
-            image=''
-            for candidate in candidates:
-                try:
-                    parsed_image=urlsplit(candidate)
-                    if parsed_image.scheme=='https' and parsed_image.hostname and not parsed_image.username and not parsed_image.password and len(candidate)<=1000:
-                        image=candidate;break
-                except (ValueError,AttributeError):continue
+            candidates.extend((u,None) for u in image_parser.urls)
+            # Widest declared https image; ties keep feed order. URLs are never rewritten.
+            image=best_candidate(candidates)
             excerpt=_feed_text(e.get('summary',''),360)
             content=_feed_text(e.get('content') or '')
             # Avoid treating the short summary repeated in content:encoded as a full article.
@@ -282,11 +278,7 @@ def ingest(source, dry_run=False):
                     if slug:
                         cat = Category.objects.filter(slug=slug).first() or cat
                         break
-                image = ''
-                if current.allow_images and isinstance(row['image'], str) and row['image']:
-                    parsed = urlsplit(row['image'])
-                    if parsed.scheme == 'https' and not parsed.username and not parsed.password and parsed.hostname and parsed.hostname.lower() in {h.lower() for h in current.image_hosts}:
-                        image = row['image'][:1000]
+                image = approved_remote_image(row['image'], current.allow_images, current.image_hosts)
                 publish = bool(current.trusted and current.auto_publish and row['published'] and row['published'] <= now)
                 try:
                     with transaction.atomic():
