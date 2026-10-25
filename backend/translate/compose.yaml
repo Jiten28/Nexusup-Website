@@ -1,0 +1,27 @@
+# Free, self-hosted translation (LibreTranslate). Start:   docker compose -f backend/translate/compose.yaml up -d
+# First start downloads the language models (a few minutes, needs internet). Then in backend/.env set:
+#   TRANSLATION_PROVIDER=libre
+#   LIBRETRANSLATE_URL=http://127.0.0.1:5000
+# and restart the backend. Add or remove language codes in LT_LOAD_ONLY to change the list.
+name: nexusup-translate
+services:
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    container_name: nexusup-translate
+    restart: unless-stopped
+    environment:
+      LT_LOAD_ONLY: "en,hi,bn,ta,te,mr,gu,ur,ar,es,fr,de,pt,ru,ja,zh"
+      LT_UPDATE_MODELS: "true"
+      LT_DISABLE_WEB_UI: "true"
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - lt-models:/home/libretranslate/.local
+    healthcheck:
+      test: ["CMD-SHELL", "./venv/bin/python scripts/healthcheck.py"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+volumes:
+  lt-models:
+    name: nexusup_translate_models

@@ -150,3 +150,26 @@ class ImportSmokeTests(TestCase):
         import importlib
         module = importlib.import_module('apps.news.ingestion')
         self.assertEqual(module.unescape('&amp;'), '&')
+
+
+@override_settings(DEBUG=True, NEWS_FETCH_ENABLED=True)
+class DoctorTests(TestCase):
+    def test_doctor_is_read_only_and_prints_next_steps(self):
+        call_command('seed_demo', verbosity=0)
+        call_command('configure_sources', verbosity=0)
+        before = (Article.objects.count(), NewsSource.objects.filter(enabled=True).count())
+        out = StringIO()
+        with override_settings(NEWS_API_KEY='super-secret-test-key', TRANSLATION_API_KEY='another-secret'):
+            call_command('doctor', stdout=out)
+        text = out.getvalue()
+        self.assertNotIn('super-secret-test-key', text)
+        self.assertNotIn('another-secret', text)
+        self.assertIn('Sources', text)
+        self.assertEqual(before, (Article.objects.count(), NewsSource.objects.filter(enabled=True).count()))
+
+    def test_sitemap_uses_frontend_scheme(self):
+        call_command('seed_demo', verbosity=0)
+        with override_settings(FRONTEND_URL='http://localhost:5173'):
+            body = self.client.get('/sitemap.xml').content.decode()
+        self.assertIn('http://localhost:5173/story/', body)
+        self.assertNotIn('https://localhost:5173', body)

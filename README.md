@@ -153,7 +153,7 @@ Images are **blocked by default** for every source. A publisher's picture is onl
 
 Your options, from simplest:
 
-1. **Check your permission.** If your agreement with the publisher covers their pictures, use the admin action **1. Approve**: it ticks *Allow images* and fills *Image hosts* from the feed itself (for BBC: `ichef.bbci.co.uk`). Then **2. Fetch now**; for stories you already have run `python manage.py backfill_images --source 1` (dry run) and then `--apply`. BBC feed pictures are small (240 px wide), so they look soft on the large cards.
+1. **Check your permission.** (If stories were fetched before pictures were allowed: in News sources tick the source and choose **2b. Get pictures for stories already saved**.) If your agreement with the publisher covers their pictures, use the admin action **1. Approve**: it ticks *Allow images* and fills *Image hosts* from the feed itself (for BBC: `ichef.bbci.co.uk`). Then **2. Fetch now**; for stories you already have run `python manage.py backfill_images --source 1` (dry run) and then `--apply`. BBC feed pictures are small (240 px wide), so they look soft on the large cards.
 2. **Use your own pictures.** In the admin, open an article, copy your image into `backend/media/` and fill **Image path** (for example `2026/10/photo.jpg`) plus **Image credit**. You own these, so no rule applies.
 3. **Use sources with open or licensed images** (for example government press offices or Creative Commons collections), after reading their licence, and add them with *Allow images* on.
 4. **Do nothing.** Cards without a picture show the NexusUp placeholder and still look tidy.
@@ -166,9 +166,26 @@ The header has a **Light / Dark / Auto** switch (Auto follows your computer) and
 Graphite Silver, Emerald Imperial, Ruby Velvet, Amethyst Noir, Arctic Aurora, Copper Sunset, Midnight Rose and Ocean Navy (eight, with smooth same-colour gradients). Each palette has its own light and dark version, and the choice is remembered in the browser.
 Colours live in one file: `frontend/src/services/themes.js`; the styling in `frontend/src/styles/site.css` (bottom section, "Design layer").
 
-## 7. Translation
+## 7. Translation (free, runs on your computer)
 
-Off by default. Set `TRANSLATION_PROVIDER` in `backend/.env` to `libre` (your own LibreTranslate server) or `google` (needs `TRANSLATION_API_KEY`, billed per character). Keys stay on the server. Originals always remain available. Details and limits: **docs/NEWS.md**.
+The "Read in" menu at the top translates the menus and the stories on the page. It uses **LibreTranslate**, a free translation server that runs in Docker, so no text leaves your machine and nothing is billed.
+
+1. Start it (first start downloads the language models: a few minutes, internet needed):
+   `docker compose -f backend/translate/compose.yaml up -d`
+2. In `backend/.env` set `TRANSLATION_PROVIDER=libre` (the address `http://127.0.0.1:5000` is already the default) and restart the backend.
+3. Check it: `python manage.py doctor`. The *Translation* section should list the languages, and the site's menu then shows them.
+
+Languages are chosen in `backend/translate/compose.yaml` (`LT_LOAD_ONLY`; Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Urdu, Arabic, Spanish, French, German, Portuguese, Russian, Japanese, Chinese are included). Originals always stay available (choose *Original · English*).
+Limits: about the first 24 stories on a page are translated; stories added with Load More stay English until you pick the language again; requests are rate-limited per visitor. Machine translation can be wrong, so the site labels it.
+Paid option: `TRANSLATION_PROVIDER=google` with `TRANSLATION_API_KEY` (billed per character). Keys stay on the server.
+
+## 7b. Something not working? Run the doctor
+
+```
+python manage.py doctor                  # checks database, sources, pictures, stories, translation
+python manage.py doctor --check-images   # also tests 3 stored picture links
+```
+It prints what is wrong in plain words and the exact next step. It only reads; it changes nothing and never prints keys.
 
 ## 8. Tests
 
@@ -185,7 +202,7 @@ First time for browser tests: `npx playwright install chromium`. More in **docs/
 | Problem | Fix |
 |---|---|
 | `ImportError ... cannot import name 'unescape'` when fetching | Fixed in this version (`apps/news/ingestion.py`). Replace your `backend` folder files with the new ones and restart `runserver` |
-| Site opened from a phone or another PC (for example `http://192.168.1.235:5173`) says *Stories are temporarily unavailable / backend did not return JSON* | Django only accepts hosts you list. In `backend/.env` add the IP to `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS` and `CSRF_TRUSTED_ORIGINS` (for example `192.168.1.235` and `http://192.168.1.235:5173`), restart the backend, and run the frontend with `npm run dev` (it already listens on the network). On your own computer simply use `http://localhost:5173` |
+| Site opened from a phone or another PC (for example `http://192.168.1.235:5173`) says *Stories are temporarily unavailable*, or RSS feed / Sitemap show an error | Fixed: the dev server now forwards requests as Django's own address, and Django (in `DJANGO_DEBUG=1`) accepts this computer's network IPs. Restart **both** `runserver` and `npm run dev`. Set `DEV_ALLOW_LAN=0` in `backend/.env` to turn it off |
 | *Fetch runs* page is empty | A fetch has not completed yet. Use *News sources → 2. Fetch now*; every attempt that gets past the checks is listed under *Fetch runs* |
 | `Activate.ps1 cannot be loaded` | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then reopen PowerShell |
 | `docker: command not found` / cannot connect to daemon | Start Docker Desktop and wait until it says *running* |

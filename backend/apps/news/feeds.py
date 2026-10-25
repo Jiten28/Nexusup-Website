@@ -12,7 +12,7 @@ class LatestFeed(Feed):
     def item_pubdate(self,item): return item.published_at
     def item_link(self,item): return settings.FRONTEND_URL + item.get_absolute_url()
 class ArticleSitemap(Sitemap):
-    protocol = 'https'
+    protocol = None  # follow FRONTEND_URL (http in local development, https in production)
     def items(self): return Article.objects.published()
     def lastmod(self,obj): return obj.updated_at
     def get_urls(self,page=1,site=None,protocol=None):

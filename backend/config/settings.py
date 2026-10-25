@@ -28,6 +28,18 @@ if not SECRET_KEY:
         raise ImproperlyConfigured('Set DJANGO_SECRET_KEY for non-demo use.')
     SECRET_KEY = 'local-demo-only-not-for-production-7478f562'
 ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],testserver')
+if DEBUG and os.getenv('DEV_ALLOW_LAN','1') == '1':
+    # Local development only: also accept this computer's own network addresses (for example
+    # http://192.168.1.20:8000) so you can test from a phone. Never active when DJANGO_DEBUG=0.
+    import socket
+    _lan = set()
+    try:
+        _lan.update(socket.gethostbyname_ex(socket.gethostname())[2])
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as _s:
+            _s.connect(('10.255.255.255', 1)); _lan.add(_s.getsockname()[0])
+    except OSError:
+        pass
+    ALLOWED_HOSTS += sorted(ip for ip in _lan if ip not in ALLOWED_HOSTS)
 INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','django.contrib.sitemaps','apps.news.apps.NewsConfig','rest_framework','corsheaders']
 MIDDLEWARE = ['django.middleware.security.SecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','corsheaders.middleware.CorsMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']
 ROOT_URLCONF = 'config.urls'
@@ -98,6 +110,11 @@ if (_frontend_origin.scheme not in (('http', 'https') if DEBUG else ('https',))
     raise ImproperlyConfigured('FRONTEND_URL must be an HTTP(S) origin without credentials, path, query or fragment.')
 CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
+if DEBUG and os.getenv('DEV_ALLOW_LAN','1') == '1':
+    for _host in ALLOWED_HOSTS:
+        if _host.replace('.','').isdigit():
+            CORS_ALLOWED_ORIGINS += [f'http://{_host}:5173']
+            CSRF_TRUSTED_ORIGINS += [f'http://{_host}:5173', f'http://{_host}:8000']
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS','0') == '1'
 if os.getenv('TRUST_PROXY_HTTPS','0') == '1':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO','https')
