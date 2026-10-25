@@ -104,3 +104,49 @@ class CoverageTests(TestCase):
         self.assertNotIn('super-secret-test-key', out.getvalue())
         self.assertIn('READ ONLY', out.getvalue())
         self.assertEqual(before, Article.objects.count())
+
+
+@override_settings(DEBUG=True, NEWS_FETCH_ENABLED=True)
+class AdminSourceFlowTests(TestCase):
+    """The admin's 'Add recommended sources' button and the Approve / Publish actions."""
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth import get_user_model
+        cls.admin_user = get_user_model().objects.create_superuser('boss', 'boss@example.com', 'pw-for-tests-123')
+
+    def setUp(self):
+        self.client.force_login(self.admin_user)
+
+    def test_empty_list_explains_what_to_do_and_button_creates_disabled_sources(self):
+        page = self.client.get('/admin/news/newssource/')
+        self.assertContains(page, 'Add recommended sources')
+        self.assertContains(page, 'No sources yet')
+        self.client.post('/admin/news/newssource/add-recommended/')
+        self.assertGreaterEqual(NewsSource.objects.count(), 10)
+        self.assertFalse(NewsSource.objects.filter(enabled=True).exists())
+
+    @patch('apps.news.network.fetch_bytes', return_value=FEED)
+    def test_approve_action_enables_source_and_takes_picture_hosts_from_the_feed(self, fetch):
+        call_command('configure_sources', verbosity=0)
+        source = NewsSource.objects.filter(adapter='rss').first()
+        self.client.post('/admin/news/newssource/', {'action': 'approve_sources', '_selected_action': [source.pk]})
+        source.refresh_from_db()
+        self.assertTrue(source.enabled and source.rights_confirmed and source.allow_images)
+        self.assertEqual(source.image_hosts, ['images.example'])
+
+    def test_publish_selected_only_changes_drafts(self):
+        call_command('seed_demo', verbosity=0)
+        sample = Article.objects.filter(is_sample=True).first()
+        draft = Article.objects.create(title='Draft', slug='draft-x', category=sample.category, author=sample.author,
+                                       excerpt='s', body='b', status='draft', is_sample=False, published_at=timezone.now())
+        self.client.post('/admin/news/article/', {'action': 'publish_selected', '_selected_action': [draft.pk]})
+        draft.refresh_from_db()
+        self.assertEqual(draft.status, 'published')
+
+
+class ImportSmokeTests(TestCase):
+    def test_ingestion_module_imports_on_this_django_version(self):
+        # Regression: 'from django.utils.html import unescape' broke every fetch on Django 5.
+        import importlib
+        module = importlib.import_module('apps.news.ingestion')
+        self.assertEqual(module.unescape('&amp;'), '&')

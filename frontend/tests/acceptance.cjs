@@ -223,17 +223,19 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
     await page.evaluate(() => localStorage.removeItem('nexusup-language'));
   });
   // ---------- Colour themes ----------
-  await run('themes: Light / Dark / Auto switch and six palettes work and are remembered', async () => {
+  await run('themes: Light / Dark / Auto switch and eight palettes work and are remembered', async () => {
     const r = await newPage(browser); await home(r.page); const p = r.page;
     const st = () => p.evaluate(() => ({theme: document.documentElement.dataset.theme, mode: document.documentElement.dataset.mode, palette: document.documentElement.dataset.palette, accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), bg: getComputedStyle(document.body).backgroundColor}));
     assert.deepEqual(await p.locator('.mode-switch button').allInnerTexts().then(a => a.map(x => x.replace(/[^A-Za-z]/g, ''))), ['Light', 'Dark', 'Auto']);
     await p.locator('.mode-switch button', {hasText: 'Dark'}).click(); let a = await st(); assert.equal(a.theme, 'dark'); assert.equal(a.mode, 'dark');
     await p.locator('.mode-switch button', {hasText: 'Light'}).click(); a = await st(); assert.equal(a.theme, 'light');
-    await p.locator('.palette-picker summary').click(); const names = await p.locator('.palette-picker .popover button').allInnerTexts(); assert.equal(names.length, 6); assert.equal(new Set(names).size, 6);
-    const accents = new Set();
-    for (let i = 0; i < 6; i++) { await p.evaluate(() => { document.querySelector('.palette-picker').open = true; }); await p.locator('.palette-picker .popover button').nth(i).click(); const s1 = await st(); accents.add(s1.accent); assert.equal(s1.theme, 'light', 'palette change keeps the mode'); }
-    assert.equal(accents.size, 6, 'every palette has its own accent');
-    await p.reload(); await p.waitForSelector('.slider-slide'); a = await st(); assert.equal(a.palette, 'rose-magenta', 'palette remembered'); assert.equal(a.mode, 'light');
+    assert.equal(await p.locator('.palette-picker, .theme-cycle ~ .popover').count(), 0, 'no drop-down menu');
+    const accents = new Set([(await st()).accent]);
+    for (let i = 0; i < 7; i++) { await p.locator('.theme-cycle').click(); const s1 = await st(); accents.add(s1.accent); assert.equal(s1.theme, 'light', 'palette change keeps the mode'); }
+    assert.equal(accents.size, 8, 'eight clicks visit eight different palettes, one click each');
+    await p.locator('.theme-cycle').click(); assert.equal((await st()).palette, 'graphite-silver', 'wraps around');
+    await p.locator('.theme-cycle').click();
+    await p.reload(); await p.waitForSelector('.slider-slide'); a = await st(); assert.equal(a.palette, 'emerald-imperial', 'palette remembered'); assert.equal(a.mode, 'light');
     await r.context.close();
     const d = await newPage(browser); await d.context.close();
   });
@@ -245,7 +247,7 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
     await p.emulateMedia({colorScheme: 'light'}); await p.waitForFunction(() => document.documentElement.dataset.theme === 'light');
     await ctx.close();
   });
-  for (const [pal, mode] of [['royal-indigo', 'light'], ['crimson-ember', 'dark'], ['teal-wave', 'light'], ['forest-lime', 'dark'], ['amber-sunrise', 'light'], ['rose-magenta', 'dark']]) {
+  for (const [pal, mode] of [['graphite-silver', 'light'], ['graphite-silver', 'dark'], ['emerald-imperial', 'light'], ['ruby-velvet', 'dark'], ['amethyst-noir', 'light'], ['arctic-aurora', 'dark'], ['copper-sunset', 'light'], ['midnight-rose', 'dark'], ['ocean-navy', 'light']]) {
     const r = await newPage(browser, {width: 1440, height: 900}); await r.page.addInitScript(([pal, mode]) => { localStorage.setItem('nexusup-palette', pal); localStorage.setItem('nexusup-theme', mode); }, [pal, mode]);
     await home(r.page); await r.page.waitForTimeout(700); await r.page.screenshot({path: `${out}/theme-${pal}-${mode}.png`, clip: {x: 0, y: 0, width: 1440, height: 900}, animations: 'disabled'}); await r.context.close();
   }

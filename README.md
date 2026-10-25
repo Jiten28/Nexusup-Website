@@ -119,28 +119,41 @@ It refuses to run if MariaDB already contains articles, so it cannot overwrite a
 
 Data lives in the Docker volume `nexusup_mariadb`. For a client's hosted MariaDB, keep `DB_ENGINE=mariadb` and change `DB_HOST`, `DB_USER`, `DB_PASSWORD`; for production also set `DB_SSL_CA` (see `backend/.env.example`) and `DJANGO_DEBUG=0`.
 
-## 4. Getting news
+## 4. Getting news (from the admin, no commands needed)
 
-Nothing is fetched automatically. Run these from `backend` with the virtual environment active:
+Open **http://127.0.0.1:8000/admin/** → **News sources**.
 
+1. Click **Add recommended sources** (top right). This creates the categories and a list of BBC section feeds. They start switched off.
+2. Tick the sources you want (for example *BBC News: India* and *BBC News: World*). In the **Action** menu choose **1. Approve** and press *Go*.
+   Approve means: *"I have permission to use these feeds."* It enables the source, confirms rights and allows the picture hosts that the feed itself uses.
+3. Tick them again, choose **2. Fetch now**, press *Go*. The green message tells you how many stories were saved. Text, summary and picture links are saved together.
+4. Open **Articles**, tick the drafts, choose **Publish selected articles now**. Or, once you trust a source, choose **3. Publish new stories from these sources automatically**.
+5. **Fetch runs** shows every fetch with counts and any error.
+
+Fetching needs `NEWS_FETCH_ENABLED=1` in `backend/.env` (the example file already has it). If the page shows an empty list or a warning, restart the server after changing `.env`.
+
+Nothing is fetched while visitors browse, and nothing is fetched on a timer. The same steps as commands (from `backend`, virtual environment active):
 ```
-python manage.py backend_status --sources        # what is configured
-python manage.py news_report                     # counts per category, newest dates, image rules
-python manage.py configure_sources               # adds more categories + candidate sources (all OFF)
-python manage.py fetch_news --source 1 --dry-run # test a source, writes nothing
-python manage.py fetch_news --source 1           # real fetch
+python manage.py configure_sources              # = "Add recommended sources"
+python manage.py fetch_news --source 1 --dry-run
+python manage.py fetch_news --source 1
+python manage.py news_report                    # counts per category, newest dates, image rules
 ```
-New sources are created **disabled and unapproved**. Switch one on in the admin (`News sources`) only after you have checked the publisher's terms: tick *Rights confirmed* and *Enabled*.
-Fetched stories are drafts until an editor publishes them, unless a source is marked *Trusted* and *Auto publish*.
-Full workflow, limits and NewsAPI quota: **docs/NEWS.md**.
+Only approve a feed after you have read the publisher's terms. More detail, limits and NewsAPI quota: **docs/NEWS.md**.
+
+### How much text and which pictures do I get?
+
+* A feed gives what the publisher puts in it: headline, date, a short summary, a link and usually a small picture. Many publishers (BBC included) do **not** put the full article in the feed, so the site shows the summary and a clear "Read the original" button. It never pretends a summary is the full article, and it does not copy text from the publisher's web page.
+* If a feed does include full text (`content:encoded`), the site saves and shows it automatically.
+* For full articles and large pictures, use feeds whose licence allows it (your own content, press-office feeds, Creative Commons or licensed news APIs) and add them as a source in the admin (*Add news source*; adapter *rss*).
 
 ## 5. Why images are not showing, and what to do
 
-Images are **blocked by default** for every source. A publisher's picture is only used if the source has both **Allow images** ticked and the picture's exact host name listed in **Image hosts**. Your BBC sources have neither, so no BBC picture is ever stored. That is a rights setting, not a bug.
+Images are **blocked by default** for every source. A publisher's picture is only used if the source has both **Allow images** ticked and the picture's exact host name listed in **Image hosts**. Until a source is approved, no picture is stored. That is a rights setting, not a bug.
 
 Your options, from simplest:
 
-1. **Check your permission.** If your agreement with the publisher covers their pictures, edit the source in the admin: tick *Allow images* and add the host (for BBC feeds: `ichef.bbci.co.uk`). Then fetch again, and for stories you already have run `python manage.py backfill_images --source 1` (dry run) and then `--apply`. BBC feed pictures are small (240 px wide), so they look soft on the large cards.
+1. **Check your permission.** If your agreement with the publisher covers their pictures, use the admin action **1. Approve**: it ticks *Allow images* and fills *Image hosts* from the feed itself (for BBC: `ichef.bbci.co.uk`). Then **2. Fetch now**; for stories you already have run `python manage.py backfill_images --source 1` (dry run) and then `--apply`. BBC feed pictures are small (240 px wide), so they look soft on the large cards.
 2. **Use your own pictures.** In the admin, open an article, copy your image into `backend/media/` and fill **Image path** (for example `2026/10/photo.jpg`) plus **Image credit**. You own these, so no rule applies.
 3. **Use sources with open or licensed images** (for example government press offices or Creative Commons collections), after reading their licence, and add them with *Allow images* on.
 4. **Do nothing.** Cards without a picture show the NexusUp placeholder and still look tidy.
@@ -149,8 +162,8 @@ The site never rewrites picture links, never guesses a picture, and never copies
 
 ## 6. Looks: themes and dark mode
 
-The header has a **Light / Dark / Auto** switch (Auto follows your computer) and a **Color Theme** menu with six palettes:
-Royal Indigo, Crimson Ember, Teal Wave, Forest Lime, Amber Sunrise and Rose Magenta. Each palette has its own light and dark version, and the choice is remembered in the browser.
+The header has a **Light / Dark / Auto** switch (Auto follows your computer) and a one-click **Color Theme** button that moves to the next of eight palettes:
+Graphite Silver, Emerald Imperial, Ruby Velvet, Amethyst Noir, Arctic Aurora, Copper Sunset, Midnight Rose and Ocean Navy (eight, with smooth same-colour gradients). Each palette has its own light and dark version, and the choice is remembered in the browser.
 Colours live in one file: `frontend/src/services/themes.js`; the styling in `frontend/src/styles/site.css` (bottom section, "Design layer").
 
 ## 7. Translation
@@ -171,6 +184,9 @@ First time for browser tests: `npx playwright install chromium`. More in **docs/
 
 | Problem | Fix |
 |---|---|
+| `ImportError ... cannot import name 'unescape'` when fetching | Fixed in this version (`apps/news/ingestion.py`). Replace your `backend` folder files with the new ones and restart `runserver` |
+| Site opened from a phone or another PC (for example `http://192.168.1.235:5173`) says *Stories are temporarily unavailable / backend did not return JSON* | Django only accepts hosts you list. In `backend/.env` add the IP to `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS` and `CSRF_TRUSTED_ORIGINS` (for example `192.168.1.235` and `http://192.168.1.235:5173`), restart the backend, and run the frontend with `npm run dev` (it already listens on the network). On your own computer simply use `http://localhost:5173` |
+| *Fetch runs* page is empty | A fetch has not completed yet. Use *News sources → 2. Fetch now*; every attempt that gets past the checks is listed under *Fetch runs* |
 | `Activate.ps1 cannot be loaded` | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then reopen PowerShell |
 | `docker: command not found` / cannot connect to daemon | Start Docker Desktop and wait until it says *running* |
 | Port 3306 already in use | Set `DB_PORT=3307` in `database/.env` and `backend/.env`, then run `up` again |

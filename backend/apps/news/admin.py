@@ -7,7 +7,12 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title','body']
     prepopulated_fields = {'slug':['title']}
     readonly_fields = ['updated_at','imported_at','source_url_hash']
-    actions = ['make_central']
+    actions = ['publish_selected','make_central']
+    @admin.action(description='Publish selected articles now')
+    def publish_selected(self,request,queryset):
+        from django.utils import timezone
+        n=queryset.filter(status='draft').update(status='published',published_at=timezone.now())
+        self.message_user(request,f'{n} article(s) published.')
     @admin.action(description='Make ONE selected published article the central featured story')
     def make_central(self,request,queryset):
         if queryset.count()!=1 or not queryset.published().exists():
@@ -35,20 +40,79 @@ class ContactAdmin(admin.ModelAdmin):
 
 @admin.register(NewsSource)
 class NewsSourceAdmin(admin.ModelAdmin):
-    list_display=['name','enabled','rights_confirmed','trusted','auto_publish','last_success_at','last_error']
+    """Where you manage news feeds. Typical flow: Add recommended sources -> tick sources ->
+    'Approve' -> 'Fetch now' -> open Articles and publish (or turn on auto-publish)."""
+    change_list_template = 'admin/news/newssource/change_list.html'
+    list_display=['name','default_category','enabled','rights_confirmed','allow_images','trusted','auto_publish','article_count','last_success_at','last_error']
     readonly_fields=['last_attempt_at','last_success_at','next_fetch_at','last_error']
     list_filter=['enabled','rights_confirmed','trusted','auto_publish','adapter']
-    actions = ['fetch_selected_sources']
+    actions = ['approve_sources','fetch_selected_sources','auto_publish_sources','disable_sources']
 
-    @admin.action(description='Fetch selected sources once (requires global enablement and approved rights)', permissions=['change'])
+    def article_count(self, obj): return obj.article_set.count()
+    article_count.short_description = 'Articles'
+
+    def get_urls(self):
+        from django.urls import path
+        return [path('add-recommended/', self.admin_site.admin_view(self.add_recommended), name='news_newssource_add_recommended')] + super().get_urls()
+
+    def add_recommended(self, request):
+        from django.core.management import call_command
+        from django.http import HttpResponseRedirect
+        from django.urls import reverse
+        if request.method == 'POST' and self.has_add_permission(request):
+            call_command('configure_sources', verbosity=0)
+            self.message_user(request, 'Recommended categories and sources added. They are OFF until you approve them below.')
+        return HttpResponseRedirect(reverse('admin:news_newssource_changelist'))
+
+    def changelist_view(self, request, extra_context=None):
+        from django.conf import settings
+        if not settings.NEWS_FETCH_ENABLED:
+            self.message_user(request, 'Fetching is switched off. Set NEWS_FETCH_ENABLED=1 in backend/.env and restart the server.', level='warning')
+        return super().changelist_view(request, extra_context)
+
+    @admin.action(description='1. Approve: I have permission to use these feeds (enable + confirm rights + allow their pictures)', permissions=['change'])
+    def approve_sources(self, request, queryset):
+        from .ingestion import ADAPTERS
+        from .network import fetch_bytes
+        from urllib.parse import urlparse
+        for source in queryset:
+            hosts = set()
+            adapter = ADAPTERS.get(source.adapter)
+            try:  # Image hosts come from the feed itself (https only); nothing is guessed.
+                if adapter is not None and source.adapter == 'rss':
+                    for row in adapter().parse(fetch_bytes(source.feed_url)):
+                        u = urlparse(row.get('image') or '')
+                        if u.scheme == 'https' and u.hostname: hosts.add(u.hostname.lower())
+            except Exception as exc:
+                self.message_user(request, f'{source.name}: could not read the feed to find picture hosts ({type(exc).__name__}). Approved without pictures.', level='warning')
+            source.enabled = True
+            source.rights_confirmed = True
+            if hosts:
+                source.allow_images = True
+                source.image_hosts = sorted(set(source.image_hosts or []) | hosts)
+            source.save()
+            self.message_user(request, f'{source.name}: approved. Picture hosts: {", ".join(sorted(hosts)) or "none found"}.')
+
+    @admin.action(description='2. Fetch now (news text and pictures)', permissions=['change'])
     def fetch_selected_sources(self, request, queryset):
         from .ingestion import ingest
         for source in queryset:
             try:
                 result = ingest(source)
-                self.message_user(request, f'Source {source.pk}: {result}')
+                self.message_user(request, f'{source.name}: {result}')
             except ValueError as exc:
-                self.message_user(request, f'Source {source.pk}: {exc}', level='error')
+                self.message_user(request, f'{source.name}: {exc}', level='error')
+            except Exception as exc:  # never show a crash page; show what went wrong instead
+                self.message_user(request, f'{source.name}: unexpected {type(exc).__name__}: {exc}', level='error')
+
+    @admin.action(description='3. Publish new stories from these sources automatically (trusted + auto-publish)', permissions=['change'])
+    def auto_publish_sources(self, request, queryset):
+        n = queryset.filter(enabled=True, rights_confirmed=True).update(trusted=True, auto_publish=True)
+        self.message_user(request, f'{n} source(s) will publish new stories automatically. Others were skipped (approve them first).')
+
+    @admin.action(description='Switch off (disable) selected sources', permissions=['change'])
+    def disable_sources(self, request, queryset):
+        self.message_user(request, f'{queryset.update(enabled=False, auto_publish=False)} source(s) disabled.')
 
 @admin.register(FetchRun)
 class FetchRunAdmin(admin.ModelAdmin):

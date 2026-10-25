@@ -2,31 +2,41 @@ import {read,save} from './preferences.js';
 // Six bold palettes. Each has its own light and dark surfaces, and a second "spark" colour
 // (--accent-2) used for gradients. Picking a palette never changes the colour mode.
 const tokens=(bg,surface,text,muted,line,accent,soft,ink,accent2)=>({'--bg':bg,'--surface':surface,'--text':text,'--muted':muted,'--line':line,'--accent':accent,'--accent-soft':soft,'--on-accent':ink,'--accent-2':accent2});
+// Gradients are tonal: --accent-2 is a close neighbour of --accent, so buttons and bars shade
+// smoothly instead of clashing two colours.
 export const themes=[
- {id:'royal-indigo',name:'Royal Indigo',
-  light:tokens('#f1f2fb','#ffffff','#14173a','#464b78','#c3c8ea','#3733c9','#e4e6fb','#ffffff','#ff5a5f'),
-  dark:tokens('#0c0f2e','#151943','#f0f1ff','#b6bbf0','#3a4090','#98a3ff','#232a68','#0c0f2e','#ff8a8e')},
- {id:'crimson-ember',name:'Crimson Ember',
-  light:tokens('#fbf1f0','#ffffff','#26141a','#68474f','#e0b8be','#b8152c','#fbe1e4','#ffffff','#f59e0b'),
-  dark:tokens('#170c0f','#25131a','#fff1f2','#e4bbc2','#6b3440','#ff8494','#3e1c25','#170c0f','#ffc15e')},
- {id:'teal-wave',name:'Teal Wave',
-  light:tokens('#ecf7f7','#ffffff','#0a2a2d','#3a6065','#add6d8','#05707a','#d5eff0','#ffffff','#ff7a45'),
-  dark:tokens('#061b1e','#0d292d','#e9fbfb','#a6d2d5','#2b5d62','#45e3d3','#12403f','#052123','#ff9d72')},
- {id:'forest-lime',name:'Forest Lime',
-  light:tokens('#eff7ea','#ffffff','#13270e','#43603a','#b5d3a8','#2b7516','#dcf0d0','#ffffff','#c99700'),
-  dark:tokens('#0d190a','#15250e','#eefce8','#b5d5aa','#3a5c2e','#92e460','#25401a','#0d190a','#e8c43a')},
- {id:'amber-sunrise',name:'Amber Sunrise',
-  light:tokens('#fff4e4','#ffffff','#2c1b05','#6f5128','#e4c898','#a94d05','#fde4bd','#ffffff','#7c3aed'),
-  dark:tokens('#1b1104','#2a1c08','#fff4e0','#e5cb9c','#6b4c1c','#ffbb52','#4a3210','#1b1104','#c4a1ff')},
- {id:'rose-magenta',name:'Rose Magenta',
-  light:tokens('#fdeff6','#ffffff','#29101f','#6c3a57','#e3b5d0','#a8106a','#fadaea','#ffffff','#0e9a9a'),
-  dark:tokens('#1a0914','#2a111f','#ffeef7','#eab9d5','#6e2f55','#ff7ac4','#4a1c37','#1a0914','#4fe0e0')},
+ {id:'graphite-silver',name:'Graphite Silver',
+  light:tokens('#f2f3f6','#ffffff','#14181f','#505866','#cdd1da','#2f3b52','#e3e7ef','#ffffff','#55658a'),
+  dark:tokens('#0d0f13','#171a21','#f1f3f7','#b4bac6','#343a47','#c1cde6','#262c3a','#0d0f13','#8fa0c4')},
+ {id:'emerald-imperial',name:'Emerald Imperial',
+  light:tokens('#eef7f2','#ffffff','#0a2a1f','#3b6554','#b3d6c4','#0b6b4c','#d6efe3','#ffffff','#12875f'),
+  dark:tokens('#04150f','#0b2419','#e8fbf2','#a8d6c0','#245b45','#5be0a8','#123a2a','#04150f','#3fc48c')},
+ {id:'ruby-velvet',name:'Ruby Velvet',
+  light:tokens('#fcf0f2','#ffffff','#2b0d17','#6e3a48','#e6b9c4','#a3123a','#fadde4','#ffffff','#c4204f'),
+  dark:tokens('#1a060d','#2a0e18','#fff0f3','#e9b9c5','#6d2a3f','#ff8fa8','#431927','#1a060d','#ff6f93')},
+ {id:'amethyst-noir',name:'Amethyst Noir',
+  light:tokens('#f4effc','#ffffff','#1f0e3d','#5d4687','#cdb9ee','#5b21b6','#e8dcfa','#ffffff','#7c3aed'),
+  dark:tokens('#0f0720','#1b0f38','#f6efff','#cbb9ee','#432a7a','#c3a1ff','#2d1a58','#0f0720','#a07bff')},
+ {id:'arctic-aurora',name:'Arctic Aurora',
+  light:tokens('#ebf6f9','#ffffff','#08283a','#3a6577','#aed3df','#0a6e8f','#d3ecf3','#ffffff','#0e8fb3'),
+  dark:tokens('#041923','#0a2a39','#e8f9ff','#a7d3e2','#1f5870','#6fe3ff','#0f3d52','#041923','#46c8ea')},
+ {id:'copper-sunset',name:'Copper Sunset',
+  light:tokens('#fcf3ea','#ffffff','#2e1708','#74502f','#e5c7a6','#a8420b','#fbe3cc','#ffffff','#cf6a22'),
+  dark:tokens('#190d05','#2a170a','#fff3e6','#e7cba9','#6a3f1c','#ffb06b','#47270f','#190d05','#ff9a4d')},
+ {id:'midnight-rose',name:'Midnight Rose',
+  light:tokens('#fdf0f4','#ffffff','#2a0f1a','#6b3b4c','#e8bccb','#b0124f','#fbdce7','#ffffff','#d6336c'),
+  dark:tokens('#1a0911','#2a1019','#fff0f5','#eab9ca','#6e2c46','#ff7aa8','#44182a','#1a0911','#ff5c93')},
+ {id:'ocean-navy',name:'Ocean Navy',
+  light:tokens('#eef3fb','#ffffff','#0c1a38','#44557c','#bccaea','#1e40af','#dbe5fa','#ffffff','#2563eb'),
+  dark:tokens('#060e22','#0f1c3d','#eef3ff','#b3c1ea','#2a3d7a','#8fb0ff','#1a2a62','#060e22','#5b8cff')},
 ];
 // Old palette ids (earlier releases) map onto the new set so saved choices keep working.
-const aliases={'midnight-coral':'crimson-ember','ocean-editorial':'teal-wave','violet-night':'royal-indigo','emerald-press':'forest-lime','sunset-journal':'amber-sunrise','graphite-gold':'amber-sunrise',ocean:'teal-wave',violet:'royal-indigo',emerald:'forest-lime',sunset:'amber-sunrise'};
+const aliases={'sapphire-gold':'graphite-silver','royal-indigo':'ocean-navy','crimson-ember':'ruby-velvet','teal-wave':'arctic-aurora','forest-lime':'emerald-imperial','amber-sunrise':'copper-sunset','rose-magenta':'midnight-rose','midnight-coral':'ruby-velvet','ocean-editorial':'arctic-aurora','violet-night':'amethyst-noir','emerald-press':'emerald-imperial','sunset-journal':'copper-sunset','graphite-gold':'graphite-silver',ocean:'arctic-aurora',violet:'amethyst-noir',emerald:'emerald-imperial',sunset:'copper-sunset'};
 export const MODES=['light','dark','auto'];
 export function resolveTheme(id){return themes.find(t=>t.id===(aliases[id]||id))||themes[0]}
 export function resolveMode(mode,prefersDark){return mode==='dark'||(mode==='auto'&&prefersDark)?'dark':'light'}
+// One click = next palette, in a fixed order (wraps around).
+export function cycleTheme(current){const i=themes.findIndex(t=>t.id===resolveTheme(current).id);return themes[(i+1)%themes.length].id}
 export function shuffleCycle(current,random=Math.random){
  const ids=themes.map(t=>t.id);
  for(let i=ids.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}

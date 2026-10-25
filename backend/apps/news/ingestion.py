@@ -8,7 +8,8 @@ import feedparser
 from defusedxml.ElementTree import fromstring
 from django.utils import timezone
 from django.utils.text import slugify
-from django.utils.html import strip_tags, unescape
+from html import unescape
+from django.utils.html import strip_tags
 from html.parser import HTMLParser
 from django.contrib.auth import get_user_model
 from django.db import transaction,IntegrityError
