@@ -2,12 +2,34 @@ from django.contrib import admin
 from .models import Article,Category,Comment,ContactMessage,NewsSource,FetchRun,Tag
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ['title','category','status','is_sample','published_at']
+    list_display = ['title','category','status','has_summary','is_sample','published_at']
     list_filter = ['status','category','is_sample','source']
     search_fields = ['title','body']
     prepopulated_fields = {'slug':['title']}
-    readonly_fields = ['updated_at','imported_at','source_url_hash']
-    actions = ['publish_selected','make_central']
+    actions = ['publish_selected','make_central','generate_summary','read_full_page']
+    readonly_fields = ['updated_at','imported_at','source_url_hash','ai_summary_at','ai_summary_model','full_text_fetched_at']
+    @admin.display(boolean=True, description='AI summary')
+    def has_summary(self, obj): return bool(obj.ai_summary)
+    @admin.action(description='Write an AI summary for the selected stories (replaces an existing one)')
+    def generate_summary(self, request, queryset):
+        from . import enrich
+        done = 0
+        for a in queryset[:25]:
+            try:
+                enrich.summarise(a, force=True); done += 1
+            except enrich.EnrichError as exc:
+                self.message_user(request, f'{a.title[:60]}: {exc}', level='warning')
+        self.message_user(request, f'{done} summary(ies) written.' + (' Only the first 25 selected stories are handled at a time.' if queryset.count() > 25 else ''))
+    @admin.action(description='Read the full article page for the selected stories (only if the source allows it)')
+    def read_full_page(self, request, queryset):
+        from . import enrich
+        done = 0
+        for a in queryset.select_related('source')[:10]:
+            try:
+                enrich.fetch_full_text(a); done += 1
+            except enrich.EnrichError as exc:
+                self.message_user(request, f'{a.title[:60]}: {exc}', level='warning')
+        self.message_user(request, f'{done} page(s) read.' + (' Only the first 10 selected stories are handled at a time.' if queryset.count() > 10 else ''))
     @admin.action(description='Publish selected articles now')
     def publish_selected(self,request,queryset):
         from django.utils import timezone
@@ -25,13 +47,65 @@ class ArticleAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':['name']}
+class CommentStatusFilter(admin.SimpleListFilter):
+    title = 'status'
+    parameter_name = 'status'
+    def lookups(self, request, model_admin):
+        return [('pending', 'Waiting for approval'), ('approved', 'Approved (public)'), ('rejected', 'Rejected (hidden)'), ('all', 'All')]
+    def queryset(self, request, queryset):
+        v = self.value() or 'pending'
+        if v == 'pending': return queryset.filter(approved=False, rejected=False)
+        if v == 'approved': return queryset.filter(approved=True, rejected=False)
+        if v == 'rejected': return queryset.filter(rejected=True)
+        return queryset
+    def choices(self, changelist):  # no empty "All" entry; the default view is "Waiting for approval"
+        for lookup, title in self.lookup_choices:
+            yield {'selected': (self.value() or 'pending') == lookup, 'query_string': changelist.get_query_string({self.parameter_name: lookup}), 'display': title}
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['name','article','approved','created_at']
-    list_filter = ['approved']
-    actions = ['approve']
-    @admin.action(description='Approve selected comments')
-    def approve(self,request,queryset): queryset.update(approved=True)
+    """Moderation queue for the conversation under every story. Comments and replies are hidden until approved."""
+    list_display = ['short_body', 'name', 'kind', 'story', 'status_badge', 'created_at']
+    list_filter = [CommentStatusFilter, 'is_editor']
+    search_fields = ['name', 'body', 'article__title']
+    ordering = ['-created_at']
+    list_select_related = ['article', 'parent']
+    autocomplete_fields = []
+    raw_id_fields = ['article', 'parent']
+    actions = ['approve', 'reject', 'back_to_pending']
+    fieldsets = [(None, {'fields': ['article', 'parent', 'name', 'body']}),
+                 ('Moderation', {'fields': ['approved', 'rejected', 'is_editor'],
+                                 'description': 'To answer a visitor as the editorial team: add a comment, pick the visitor comment as "parent", tick Approved and Is editor.'})]
+
+    def short_body(self, obj): return (obj.body[:90] + '…') if len(obj.body) > 90 else obj.body
+    short_body.short_description = 'Comment'
+    def kind(self, obj): return 'Reply' if obj.parent_id else 'Comment'
+    def story(self, obj): return obj.article.title[:60]
+    story.short_description = 'Story'
+    def status_badge(self, obj):
+        from django.utils.html import format_html
+        colour = {'pending': '#b45309', 'approved': '#15803d', 'rejected': '#b91c1c'}[obj.status]
+        label = {'pending': 'Waiting', 'approved': 'Approved', 'rejected': 'Rejected'}[obj.status]
+        return format_html('<b style="color:{}">{}</b>', colour, label)
+    status_badge.short_description = 'Status'
+
+    def changelist_view(self, request, extra_context=None):
+        if not request.GET:  # open on the work queue
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(request.path + '?status=pending')
+        waiting = Comment.objects.filter(approved=False, rejected=False).count()
+        self.message_user(request, f'{waiting} comment(s)/repl(ies) waiting for approval.' if waiting else 'Nothing is waiting for approval.', level='warning' if waiting else 'info')
+        return super().changelist_view(request, extra_context)
+
+    @admin.action(description='Approve selected (show publicly)', permissions=['change'])
+    def approve(self, request, queryset):
+        self.message_user(request, f'{queryset.update(approved=True, rejected=False)} approved.')
+    @admin.action(description='Reject selected (hide, keep the record)', permissions=['change'])
+    def reject(self, request, queryset):
+        self.message_user(request, f'{queryset.update(approved=False, rejected=True)} rejected.')
+    @admin.action(description='Move selected back to "waiting"', permissions=['change'])
+    def back_to_pending(self, request, queryset):
+        self.message_user(request, f'{queryset.update(approved=False, rejected=False)} moved back to waiting.')
 @admin.register(ContactMessage)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ['name','email','created_at']
@@ -43,7 +117,7 @@ class NewsSourceAdmin(admin.ModelAdmin):
     """Where you manage news feeds. Typical flow: Add recommended sources -> tick sources ->
     'Approve' -> 'Fetch now' -> open Articles and publish (or turn on auto-publish)."""
     change_list_template = 'admin/news/newssource/change_list.html'
-    list_display=['name','default_category','enabled','rights_confirmed','allow_images','trusted','auto_publish','article_count','picture_count','last_success_at','last_error']
+    list_display=['name','default_category','enabled','rights_confirmed','allow_images','fetch_full_text','trusted','auto_publish','article_count','picture_count','last_success_at','last_error']
     readonly_fields=['last_attempt_at','last_success_at','next_fetch_at','last_error']
     list_filter=['enabled','rights_confirmed','trusted','auto_publish','adapter']
     actions = ['approve_sources','fetch_selected_sources','get_saved_pictures','auto_publish_sources','disable_sources']
@@ -103,6 +177,16 @@ class NewsSourceAdmin(admin.ModelAdmin):
             note = ', '.join(sorted(hosts)) or ('none found' if source.adapter == 'rss' else 'not automatic for NewsAPI: its pictures come from many different publishers, so list the hosts you are allowed to use yourself')
             self.message_user(request, f'{source.name}: approved. Picture hosts: {note}.')
 
+    def _after_fetch(self, request):
+        from django.conf import settings
+        if not settings.AI_SUMMARY_AFTER_FETCH: return
+        from . import enrich
+        try:
+            out, problems = enrich.enrich_batch()
+            self.message_user(request, f'Extra steps: {out["fulltext"]} full page(s) read, {out["summarised"]} AI summary(ies) written.')
+        except Exception as exc:
+            self.message_user(request, f'Extra steps stopped: {type(exc).__name__}.', level='warning')
+
     @admin.action(description='2. Fetch now (news text and pictures)', permissions=['change'])
     def fetch_selected_sources(self, request, queryset):
         from .ingestion import ingest
@@ -110,6 +194,7 @@ class NewsSourceAdmin(admin.ModelAdmin):
             try:
                 result = ingest(source)
                 self.message_user(request, f'{source.name}: {result}')
+                self._after_fetch(request)
             except ValueError as exc:
                 self.message_user(request, f'{source.name}: {exc}', level='error')
             except Exception as exc:  # never show a crash page; show what went wrong instead

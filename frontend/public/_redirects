@@ -1,0 +1,2 @@
+# Single-page app: every page address loads index.html (real files such as /assets/* are served first).
+/*  /index.html  200

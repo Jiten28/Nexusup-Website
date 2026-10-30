@@ -212,6 +212,23 @@ First time for browser tests: `npx playwright install chromium`. More in **docs/
 | Blank page at :5173 | Backend not running on port 8000 |
 | Unicode / Hindi text looks wrong in MariaDB | The compose file already uses `utf8mb4`; do not create the database by hand |
 
+## 11. Conversation, AI summaries, weather (new)
+
+**Run once after updating:** `python manage.py migrate` (adds columns only).
+
+**Comments and replies.** Every story page ends with a Conversation panel. Visitors enter a name and comment; replies use the Reply link. Admin > **Comments** opens on *Waiting for approval*: tick rows, choose **Approve** or **Reject**. To answer as the newsroom, *Add comment*, tick **Is editor** and **Approved**, and pick the comment under **Parent**.
+
+**AI summary.** Recommended for IONOS shared hosting: `AI_SUMMARY_PROVIDER=claude` plus `ANTHROPIC_API_KEY=...` in `backend/.env` (pay per use, no server load). Ollama needs your own server with enough memory, so it is for a VPS or your PC. Then either:
+- Admin > Articles > select stories > **Write an AI summary**, or
+- `python manage.py enrich_news --limit 10`, or set `AI_SUMMARY_AFTER_FETCH=1` to do it after each fetch.
+Check summaries before relying on them: they are labelled as automatic and can contain mistakes. A story that holds only a short RSS snippet is skipped (not enough text).
+
+**Full article text (like the WordPress Automatic plugin).** Open a news source and tick **Fetch full text** only if the publisher permits reuse of its text. Then use **Read the full article page** on stories. Pages that disallow robots or need a login are skipped with a reason.
+
+**Weather.** Put `OPENWEATHER_API_KEY=` in `backend/.env` (new keys can take up to two hours to start working). Do not paste the key into chat or code.
+
+**Translation without Docker.** `TRANSLATION_PROVIDER=mymemory`. Free quota is small (a few thousand characters a day, more with `MYMEMORY_EMAIL`), results are cached for a week, and a message appears when the allowance is used up. For unlimited translation use LibreTranslate (section 7).
+
 ## 10. Safety rules built in
 
 Fetching is manual; sources start disabled; only approved image hosts are used; secrets stay in `.env` files that Git ignores; original SQLite files are never modified by the scripts; imports refuse to overwrite existing articles.

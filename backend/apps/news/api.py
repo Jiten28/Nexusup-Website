@@ -30,7 +30,7 @@ def languages(request):
     except Exception as exc:
         r=unavailable(exc);return r
 
-def translation_payload(path):
+def translation_payload(path,ids=None):
     # Derive every translated string on the server: not an arbitrary paid translation proxy.
     if not isinstance(path,str) or len(path)>1024:
         raise ValueError('Invalid public page path')
@@ -45,14 +45,19 @@ def translation_payload(path):
     posts=public(include_samples=match.url_name=='article')
     if match.url_name=='article':posts=posts.filter(slug=match.kwargs['slug'])
     elif match.url_name=='category':posts=posts.filter(category__slug=match.kwargs['slug'])
-    for post in posts[:24]:
+    chosen=list(posts[:24])
+    # Stories added by "Load more" are named by id; only PUBLIC stories are ever looked up, so this is not a free-text proxy.
+    extra=[int(i) for i in (ids or []) if isinstance(i,int) and not isinstance(i,bool)][:24]
+    if extra:chosen+=list(public().filter(pk__in=extra).exclude(pk__in=[p.pk for p in chosen])[:max(0,48-len(chosen))])
+    for post in chosen:
         for field in ['title','excerpt']:payload[f'article:{post.pk}:{field}']=getattr(post,field)
         if match.url_name=='article':
             for i,para in enumerate(post.paragraphs):payload[f'article:{post.pk}:p{i}']=para
+            if getattr(post,'ai_summary',''):payload[f'article:{post.pk}:summary']=post.ai_summary
     return payload
 @require_POST
 def translate(request):
-    if len(request.body)>2048:return JsonResponse({'error':'Request too large'},status=400)
+    if len(request.body)>4096:return JsonResponse({'error':'Request too large'},status=400)
     # Rate-limit without creating database sessions merely for translation.
     import hashlib
     client = request.META.get('REMOTE_ADDR','unknown')
@@ -62,7 +67,9 @@ def translate(request):
         data=json.loads(request.body)
         if not isinstance(data,dict) or data.get('source','en') != 'en' or not isinstance(data.get('language','en'),str):
             raise ValueError('Expected a JSON object with source English and a target language code.')
-        payload=translation_payload(data.get('path','/'))
+        ids=data.get('ids',[])
+        if not isinstance(ids,list):raise ValueError('ids must be a list of story numbers.')
+        payload=translation_payload(data.get('path','/'),ids)
         # Fixed server-side corpus, bounded request volume. Add shared production quotas before public use.
         keys=list(payload);texts=list(payload.values())
         if sum(map(len,texts))>45000:raise ValueError('Page exceeds translation size limit')

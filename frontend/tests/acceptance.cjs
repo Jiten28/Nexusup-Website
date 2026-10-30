@@ -211,6 +211,34 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
     assert.equal(await page.locator('.article-detail [data-image-fallback]').count(), 1); assert.equal(await page.locator('.article-detail img[src*="images.example"]').count(), 0);
   });
 
+  await run('conversation: approved comment shows with its count; replies are collapsed then expand with an editor badge', async () => {
+    await page.goto(base + '/story/story-1/'); await page.waitForSelector('.conversation .comment');
+    assert.equal((await page.locator('.conversation .count').innerText()).trim(), '2');
+    assert.match(await page.locator('.comment-body').first().innerText(), /First approved comment/);
+    assert.equal(await page.locator('.comment-reply').count(), 0, 'replies start collapsed');
+    await page.locator('.replies-toggle').click();
+    assert.equal(await page.locator('.comment-reply').count(), 1); assert.equal(await page.locator('.comment-reply .badge').count(), 1);
+    await page.screenshot({path: `${out}/conversation.png`, fullPage: true, animations: 'disabled'});
+  });
+  await run('conversation: a visitor can post a comment and a reply; both are held for approval, nothing appears at once', async () => {
+    await page.goto(base + '/story/story-1/'); await page.waitForSelector('.conversation .composer');
+    const top = page.locator('.conversation > .composer');
+    await top.locator('input').fill('Ravi'); await top.locator('textarea').fill('My own comment');
+    await top.locator('button:not(.ghost)').click(); await page.waitForSelector('.conversation > .composer .composer-note');
+    assert.match(await top.locator('.composer-note').innerText(), /approves it/);
+    assert.equal(await page.locator('.comment-body', {hasText: 'My own comment'}).count(), 0, 'pending comment is not shown publicly');
+    await page.locator('.comment-actions .link').first().click();
+    const rep = page.locator('.composer-reply'); await rep.locator('input').fill('Ravi'); await rep.locator('textarea').fill('A reply');
+    await rep.locator('button:not(.ghost)').click(); await page.waitForSelector('.composer-reply .composer-note');
+    assert.match(await rep.locator('.composer-note').innerText(), /reply will appear after an editor approves/);
+  });
+  await run('conversation: a story with no comments shows the empty prompt; AI summary box is labelled', async () => {
+    await page.goto(base + '/story/story-2/'); await page.waitForSelector('.conversation');
+    assert.equal(await page.locator('.conversation-empty').count(), 1); assert.equal(await page.locator('.ai-summary').count(), 0);
+    await page.goto(base + '/story/story-1/'); await page.waitForSelector('.ai-summary');
+    assert.match(await page.locator('.ai-summary').innerText(), /ai summary[\s\S]*Fixture AI summary sentence[\s\S]*mistakes/i);
+  });
+
   // ---------- Translation ----------
   await run('translation: language list is ready on load; UI switches and original English returns', async () => {
     await page.goto(base + '/'); await page.waitForSelector('.latest-main-composition .story-card');
@@ -223,6 +251,14 @@ async function run(name, fn) { const t = Date.now(); try { await fn(); results.p
     await page.evaluate(() => localStorage.removeItem('nexusup-language'));
   });
   // ---------- Colour themes ----------
+  await run('translation: stories added later by Load More are translated too (ids are sent, not free text)', async () => {
+    await home(page); await page.waitForFunction(() => document.querySelectorAll('#language option').length > 1);
+    await page.selectOption('#language', 'hi'); await page.waitForFunction(() => document.querySelector('.story-card h3 a').textContent.startsWith('Translated') || document.querySelector('.story-card h3 a').textContent.startsWith('कहानी'));
+    const before = await page.locator('.story-card').count();
+    await page.locator('.load-more button').click(); await page.waitForFunction(n => document.querySelectorAll('.story-card').length > n, before);
+    await page.waitForFunction(() => [...document.querySelectorAll('.story-card h3 a')].filter(a => a.textContent.startsWith('Translated')).length >= 2, null, {timeout: 8000});
+    await page.selectOption('#language', 'en');
+  });
   await run('themes: Light / Dark / Auto switch and eight palettes work and are remembered', async () => {
     const r = await newPage(browser); await home(r.page); const p = r.page;
     const st = () => p.evaluate(() => ({theme: document.documentElement.dataset.theme, mode: document.documentElement.dataset.mode, palette: document.documentElement.dataset.palette, accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), bg: getComputedStyle(document.body).backgroundColor}));

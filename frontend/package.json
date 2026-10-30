@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test tests/*.test.js",
-    "test:browser": "node tests/acceptance.cjs",
-    "demo": "vite --host 0.0.0.0 --mode demo",
-    "build:demo": "vite build --mode demo --outDir dist-demo",
-    "preview:demo": "vite preview --host 0.0.0.0 --outDir dist-demo"
+    "test:browser": "node tests/acceptance.cjs"
   },
   "dependencies": {
     "react": "^19.1.0",

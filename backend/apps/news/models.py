@@ -37,6 +37,7 @@ class NewsSource(models.Model):
     image_hosts = models.JSONField(default=list, blank=True, help_text='Explicit approved image hostnames; permission still required.')
     trusted = models.BooleanField(default=False, help_text="Explicit editorial trust; separate from permission to auto-publish.")
     auto_publish = models.BooleanField(default=False, help_text='Default is editorial review. Imports never become featured automatically.')
+    fetch_full_text = models.BooleanField(default=False, help_text='Also read the full article page of each NEW story (respects robots.txt). Only tick this if the publisher permits reuse of their article text; requires rights confirmed.')
     interval_minutes = models.PositiveIntegerField(default=30)
     next_fetch_at = models.DateTimeField(null=True, blank=True)
     last_attempt_at = models.DateTimeField(null=True, blank=True)
@@ -91,6 +92,10 @@ class Article(models.Model):
     image_path = models.CharField(max_length=350, blank=True, validators=[RegexValidator(r'^(?!/)(?!.*(?:\.\.|\\))[A-Za-z0-9_./-]+$','Use a safe relative media path.')])
     image_alt = models.CharField(max_length=220, blank=True)
     image_credit = models.CharField(max_length=220, blank=True)
+    ai_summary = models.TextField(blank=True, help_text='AI-written summary of the text we hold for this story. Always shown with an AI label.')
+    ai_summary_at = models.DateTimeField(null=True, blank=True)
+    ai_summary_model = models.CharField(max_length=80, blank=True)
+    full_text_fetched_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(default=timezone.now, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -121,12 +126,19 @@ class Article(models.Model):
     def paragraphs(self): return self.body.split('\n\n')
 
 class Comment(models.Model):
+    """A comment or a reply (parent set). Nothing is public until an editor approves it."""
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies',
+                               help_text='Set for a reply. Replies are always one level deep.')
     name = models.CharField(max_length=80)
     body = models.TextField(max_length=2000)
     approved = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False, help_text='Hidden for good (spam/abuse) but kept for the record.')
+    is_editor = models.BooleanField(default=False, help_text='Shown with an "Editorial team" badge.')
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta: ordering = ['created_at']
+    @property
+    def status(self): return 'rejected' if self.rejected else 'approved' if self.approved else 'pending'
     def __str__(self): return f'{self.name}: {self.body[:40]}'
 
 class ContactMessage(models.Model):

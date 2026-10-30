@@ -23,15 +23,27 @@ function Language({setTexts}){
  const reset=()=>{setTexts({});document.documentElement.lang='en';document.documentElement.dir='ltr'};
  // The language list is loaded once on page load, so the dropdown is ready before it is opened.
  useEffect(()=>{let live=true;(async()=>{try{const d=await api('/api/languages/');if(live)setLanguages(d.languages)}catch(e){if(live){setNote('Original English · translation is not configured on this server.');setSelected('en')}}})();return()=>{live=false}},[]);
- async function apply(language){
+ const shownIds=()=>[...new Set([...document.querySelectorAll('[data-article-id]')].map(n=>Number(n.dataset.articleId)).filter(Number.isInteger))].slice(0,24);
+ async function apply(language,quiet=false){
   if(language==='en'){reset();return}
-  setBusy(true);
-  try{const d=await submit('/api/translate/',{path:loc.pathname,language});setTexts(d.texts);setNote(d.notice+' Some labels and stories may remain English.');document.documentElement.lang=language;document.documentElement.dir=RTL.includes(language)?'rtl':'ltr'}
-  catch(e){setNote(e.message+' Original English retained.');setSelected('en');save('nexusup-language','en');reset()}
-  finally{setBusy(false)}
+  if(!quiet)setBusy(true);
+  try{const d=await submit('/api/translate/',{path:loc.pathname,language,ids:shownIds()});setTexts(old=>quiet?{...old,...d.texts}:d.texts);if(!quiet)setNote(d.notice+' Some labels and stories may remain English.');document.documentElement.lang=language;document.documentElement.dir=RTL.includes(language)?'rtl':'ltr'}
+  catch(e){if(quiet)return false;setNote(e.message+' Original English retained.');setSelected('en');save('nexusup-language','en');reset()}
+  finally{if(!quiet)setBusy(false)}
+  return true;
  }
  // Re-translate each page the reader opens; English simply clears the overrides.
  useEffect(()=>{apply(selected)},[loc.pathname]);
+ // Stories added later by "Load more" are translated too: watch for new cards, then top up quietly.
+ useEffect(()=>{
+  if(selected==='en')return;
+  const main=document.getElementById('main');if(!main)return;
+  let seen=shownIds().join(','),timer=0,retry=0;
+  const sync=async()=>{const now=shownIds().join(',');if(now===seen)return;if(await apply(selected,true)===false){retry=setTimeout(sync,11000);return}seen=now};
+  const mo=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(sync,1200)});
+  mo.observe(main,{childList:true,subtree:true});
+  return()=>{mo.disconnect();clearTimeout(timer);clearTimeout(retry)};
+ },[selected,loc.pathname]);
  const change=language=>{setSelected(language);save('nexusup-language',language);if(language==='en')setNote('Original English');apply(language)};
  return <div className="language-bar wrap"><div><span className="eyebrow">{t('ui:eyebrow','A FRESH PERSPECTIVE')}</span><p>{t('ui:curiosity','Curiosity connects us.')}</p></div><div className="language"><label htmlFor="language">{t('ui:read_in','Read in')}</label><select id="language" value={selected} disabled={busy} onChange={e=>change(e.target.value)}><option value="en">Original · English</option>{languages.filter(x=>x.code!=='en').map(x=><option key={x.code} value={x.code}>{x.name}</option>)}</select><small role="status">{busy?'Translating…':note}</small></div></div>
 }

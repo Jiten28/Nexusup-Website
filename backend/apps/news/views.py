@@ -49,7 +49,7 @@ def article(request,slug):
             comment = form.save(commit=False); comment.article = post; comment.save()
             messages.success(request,'Saved locally for moderation. Your comment is not public until approved.')
             return redirect(post.get_absolute_url()+'#discussion')
-    return render(request,'news/article.html',{'article':post,'form':form,'comments':post.comments.filter(approved=True),'related':published().filter(category=post.category).exclude(pk=post.pk)[:3]})
+    return render(request,'news/article.html',{'article':post,'form':form,'comments':post.comments.filter(approved=True,rejected=False,parent__isnull=True),'related':published().filter(category=post.category).exclude(pk=post.pk)[:3]})
 
 def contact(request):
     form = ContactForm(request.POST or None)

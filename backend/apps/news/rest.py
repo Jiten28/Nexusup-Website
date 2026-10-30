@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.core.cache import cache
 from rest_framework import serializers, generics
 from rest_framework.pagination import PageNumberPagination
-from .models import Article, Category, Tag
+from .models import Article, Category, Tag, Comment
 from .forms import ContactForm, CommentForm
 import json
 
@@ -37,12 +37,26 @@ class ArticleSerializer(serializers.ModelSerializer):
     def get_image(self,obj):
         value=obj.image_src
         return self.context['request'].build_absolute_uri(value) if value else ''
+def comment_thread(article):
+    """Public conversation: approved top-level comments (newest first), each with approved replies (oldest first)."""
+    visible=Comment.objects.filter(article=article,approved=True,rejected=False)
+    replies={}
+    for r in visible.exclude(parent=None).order_by('created_at'):
+        replies.setdefault(r.parent_id,[]).append(r)
+    def row(c): return {'id':c.pk,'name':c.name,'body':c.body,'created_at':c.created_at,'is_editor':c.is_editor}
+    top=visible.filter(parent=None).order_by('-created_at')[:100]
+    return [dict(row(c),replies=[row(r) for r in replies.get(c.pk,[])]) for c in top]
 class DetailSerializer(ArticleSerializer):
     comments=serializers.SerializerMethodField()
+    comment_count=serializers.SerializerMethodField()
+    ai_summary=serializers.SerializerMethodField()
     class Meta(ArticleSerializer.Meta):
-        fields=ArticleSerializer.Meta.fields+['body','comments']
-    def get_comments(self,obj):
-        return list(obj.comments.filter(approved=True).values('name','body','created_at')[:100])
+        fields=ArticleSerializer.Meta.fields+['body','comments','comment_count','ai_summary']
+    def get_comments(self,obj): return comment_thread(obj)
+    def get_comment_count(self,obj): return Comment.objects.filter(article=obj,approved=True,rejected=False).count()
+    def get_ai_summary(self,obj):
+        if not obj.ai_summary: return None
+        return {'text':obj.ai_summary,'model':obj.ai_summary_model,'created_at':obj.ai_summary_at}
 class Pagination(PageNumberPagination):
     page_size=12; page_size_query_param='page_size'; max_page_size=24
 
@@ -127,5 +141,19 @@ def submit(request,slug=None):
     if slug:
         from django.shortcuts import get_object_or_404
         obj.article=get_object_or_404(public(include_samples=True),slug=slug)
+        parent_id=data.get('parent')
+        if parent_id not in (None,''):
+            try:parent=Comment.objects.get(pk=int(parent_id),article=obj.article,approved=True,rejected=False)
+            except (ValueError,TypeError,Comment.DoesNotExist):return JsonResponse({'error':'The comment you are replying to is not available.'},status=400)
+            obj.parent=parent.parent or parent  # conversations are two levels: comment and replies
+        obj.approved=False;obj.rejected=False;obj.is_editor=False  # visitors can never self-approve
     obj.save()
-    return JsonResponse({'message':'Received for editorial review.' if slug else 'Message received by the local editorial inbox.'},status=201)
+    return JsonResponse({'message':('Thank you. Your reply will appear after an editor approves it.' if getattr(obj,'parent_id',None) else 'Thank you. Your comment will appear after an editor approves it.') if slug else 'Message received by the local editorial inbox.'},status=201)
+@require_GET
+def comment_list(request,slug):
+    from django.shortcuts import get_object_or_404
+    article=get_object_or_404(public(include_samples=True),slug=slug)
+    thread=comment_thread(article)
+    return JsonResponse({'results':thread,'count':Comment.objects.filter(article=article,approved=True,rejected=False).count()})
+def comments(request,slug):
+    return comment_list(request,slug) if request.method=='GET' else submit(request,slug)

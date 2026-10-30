@@ -25,14 +25,32 @@ def currency(base,quote):
         return {'rate':rate,'date':data['date'],'source':'Frankfurter — daily blended reference rate; not a live quote'}
     return cached(f'fx:{base}:{quote}',3600,load)
 def cities(name):
-    if not settings.UTILITIES_NETWORK_ENABLED:raise ValueError('Weather/geocoding provider disabled. Manual coordinates are still available.')
+    if not (settings.UTILITIES_NETWORK_ENABLED or settings.OPENWEATHER_API_KEY):raise ValueError('Weather/geocoding provider disabled. Manual coordinates are still available.')
     if not 2<=len(name)<=80:raise ValueError('Enter a city name, 2–80 characters.')
     data=cached('city:'+hashlib.sha256(name.lower().encode()).hexdigest(),86400,lambda:fetch_json('https://geocoding-api.open-meteo.com/v1/search?'+urlencode({'name':name,'count':5,'language':'en','format':'json'})))
     return [{'name':', '.join(str(r[k]) for k in ['name','admin1','country'] if r.get(k)),'latitude':r['latitude'],'longitude':r['longitude']} for r in data.get('results',[])]
+def owm_to_wmo(i):
+    # Map OpenWeatherMap condition ids onto the WMO-style codes the website widget already understands.
+    i=int(i)
+    if i==800:return 0
+    if 801<=i<=804:return 3
+    if 200<=i<300:return 95
+    if 300<=i<600:return 61
+    if 600<=i<700:return 71
+    if 700<=i<800:return 45
+    return 3
 def weather(lat,lon):
-    if not settings.UTILITIES_NETWORK_ENABLED:raise ValueError('Weather provider disabled. Enable UTILITIES_NETWORK_ENABLED for evaluation, or configure a licensed commercial plan.')
+    if not (settings.UTILITIES_NETWORK_ENABLED or (settings.WEATHER_PROVIDER=='openweathermap' and settings.OPENWEATHER_API_KEY)):raise ValueError('Weather provider disabled. Enable UTILITIES_NETWORK_ENABLED for evaluation, or configure a licensed commercial plan.')
     lat=float(lat);lon=float(lon)
     if not math.isfinite(lat) or not math.isfinite(lon) or not -90<=lat<=90 or not -180<=lon<=180:raise ValueError('Invalid coordinates')
+    if settings.WEATHER_PROVIDER=='openweathermap':
+        if not settings.OPENWEATHER_API_KEY:raise ValueError('OpenWeatherMap is selected but OPENWEATHER_API_KEY is not set in backend/.env.')
+        def load_owm():
+            # The key travels only server-to-OpenWeatherMap; errors are reduced to a safe message by the API layer.
+            data=fetch_json('https://api.openweathermap.org/data/2.5/weather?'+urlencode({'lat':round(lat,2),'lon':round(lon,2),'units':'metric','appid':settings.OPENWEATHER_API_KEY}))
+            w=(data.get('weather') or [{}])[0];main=data['main']
+            return {'temperature':round(main['temp'],1),'weather_code':owm_to_wmo(w.get('id',0)),'condition':str(w.get('description','')).capitalize()[:60],'wind':round(float(data.get('wind',{}).get('speed',0))*3.6,1),'time':timezone.now().strftime('%Y-%m-%dT%H:%M:%S')+'Z','source':'OpenWeatherMap','attribution_url':'https://openweathermap.org/','units':'°C / km/h'}
+        return cached(f'weather:owm:{lat:.2f}:{lon:.2f}',600,load_owm)
     def load():
         host='customer-api.open-meteo.com' if settings.OPEN_METEO_API_KEY else 'api.open-meteo.com'
         params={'latitude':round(lat,2),'longitude':round(lon,2),'current':'temperature_2m,weather_code,wind_speed_10m','timezone':'UTC'}
@@ -71,8 +89,37 @@ def translation_json(path, data=None):
         raise TranslationError('Translation provider unavailable or returned an invalid response. Check the configured endpoint, installed models and timeout; original English is retained.') from None
 
 
+MYMEMORY_LANGS=[('hi','Hindi'),('bn','Bengali'),('ta','Tamil'),('te','Telugu'),('mr','Marathi'),('gu','Gujarati'),('kn','Kannada'),('ml','Malayalam'),('pa','Punjabi'),('ur','Urdu'),('ar','Arabic'),('es','Spanish'),('fr','French'),('de','German'),('pt','Portuguese'),('ru','Russian'),('ja','Japanese'),('zh-CN','Chinese (Simplified)'),('id','Indonesian'),('tr','Turkish'),('it','Italian')]
+def _mymemory_one(text,target):
+    q=text.strip()
+    if not q:return text
+    # MyMemory accepts at most ~500 bytes per request, so long text is cut on sentence ends.
+    parts=[];cur=''
+    for sent in __import__('re').split(r'(?<=[.!?])\s+',q):
+        while len(sent.encode())>450:sent,rest=sent[:150],sent[150:];parts.append((cur+' '+sent).strip() if cur else sent);cur='';sent=rest
+        if len((cur+' '+sent).encode())>450:parts.append(cur);cur=sent
+        else:cur=(cur+' '+sent).strip()
+    if cur:parts.append(cur)
+    out=[]
+    for part in parts:
+        params={'q':part,'langpair':f'en|{target}'}
+        if settings.MYMEMORY_EMAIL:params['de']=settings.MYMEMORY_EMAIL
+        data=fetch_json('https://api.mymemory.translated.net/get?'+urlencode(params),timeout=settings.TRANSLATION_TIMEOUT)
+        text_out=str(data.get('responseData',{}).get('translatedText',''))
+        if str(data.get('responseStatus'))!='200' or data.get('quotaFinished') or text_out.upper().startswith('MYMEMORY WARNING') or not text_out:
+            raise TranslationError('The free translation allowance for today is used up. Original English is shown; try again tomorrow or ask the site owner to add a MyMemory email or a self-hosted translator.')
+        out.append(html.unescape(text_out))
+    return ' '.join(out)
+def _mymemory_cached(text,target):
+    # Each sentence is remembered for a week, so the free daily allowance is only spent on text not seen before.
+    key='mm:'+hashlib.sha256((target+'|'+text).encode()).hexdigest()
+    hit=cache.get(key)
+    if hit is not None:return hit
+    out=_mymemory_one(text,target);cache.set(key,out,7*86400);return out
 def languages():
     provider = settings.TRANSLATION_PROVIDER
+    if provider == 'mymemory':
+        return [{'code':c,'name':n} for c,n in MYMEMORY_LANGS]
     if provider == 'google':
         if not settings.TRANSLATION_API_KEY:
             raise TranslationError('Google Cloud Translation requires a server-side API key and billing configuration; no paid fallback is automatic.')
@@ -111,6 +158,10 @@ def translate_texts(texts, target):
         if settings.TRANSLATION_PROVIDER == 'google':
             data = fetch_json('https://translation.googleapis.com/language/translate/v2?' + urlencode({'key':settings.TRANSLATION_API_KEY}), {'q':texts,'source':'en','target':target,'format':'text'})
             result = [html.unescape(x['translatedText']) for x in data['data']['translations']]
+        elif settings.TRANSLATION_PROVIDER == 'mymemory':
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                result = list(pool.map(lambda x: _mymemory_cached(x, target), texts))
         elif settings.TRANSLATION_PROVIDER == 'libre':
             result = []
             # Bound batch sizes, retaining original ordering. No article or provider metadata is sent.

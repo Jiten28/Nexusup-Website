@@ -35,5 +35,9 @@ class Command(BaseCommand):
             except ValueError as exc:
                 failures += 1
                 self.stderr.write(f'source_id={source.pk}: {exc}')
+        if settings.AI_SUMMARY_AFTER_FETCH and not options['dry_run']:
+            from apps.news import enrich
+            out, problems = enrich.enrich_batch()
+            self.stdout.write(f'extra steps: {out}')
         if failures:
             raise CommandError(f'{failures} source fetch(es) failed or were blocked; stored content retained.')

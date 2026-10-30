@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/articles/',rest.ArticleList.as_view()),
     path('api/articles/<slug:slug>/',rest.ArticleDetail.as_view()),
     path('api/articles/<slug:slug>/related/',rest.related),
-    path('api/articles/<slug:slug>/comments/',rest.submit),
+    path('api/articles/<slug:slug>/comments/',rest.comments),
     path('api/categories/',rest.Categories.as_view()),path('api/tags/',rest.Tags.as_view()),
     path('api/home/',rest.home),path('api/contact/',rest.submit),path('api/csrf/',rest.csrf),
     path('health/live/',rest.health),path('health/ready/',rest.readiness),

@@ -39,7 +39,12 @@ function build(total = 30) {
   return articles;
 }
 
+function seedComments() {
+  return [{id: 11, name: 'Asha', body: 'First approved comment.', created_at: new Date(Date.now() - 3600e3).toISOString(), is_editor: false,
+    replies: [{id: 12, name: 'NexusUp editor', body: 'Thanks Asha, noted.', created_at: new Date(Date.now() - 1800e3).toISOString(), is_editor: true}]}];
+}
 function mockApi(articles = build()) {
+  const posted = [];
   const counts = () => { const c = {}; for (const a of articles) c[a.category.id] = (c[a.category.id] || 0) + 1; return c; };
   const page = (items, url) => {
     const size = Math.min(parseInt(url.searchParams.get('page_size') || '12', 10), 24), p = parseInt(url.searchParams.get('page') || '1', 10);
@@ -60,11 +65,15 @@ function mockApi(articles = build()) {
     let m = path.match(/^\/api\/articles\/([^/]+)\/related\/$/);
     if (m) return {results: articles.filter(a => a.slug !== m[1]).slice(0, 2).map(strip)};
     m = path.match(/^\/api\/articles\/([^/]+)\/$/);
-    if (m) return articles.find(a => a.slug === m[1]) || null;
+    if (m) { const a = articles.find(x => x.slug === m[1]); if (!a) return null; const comments = a.slug === 'story-1' ? seedComments() : [];
+      return {...a, comments, comment_count: comments.reduce((n, c) => n + 1 + c.replies.length, 0), ai_summary: a.slug === 'story-1' ? {text: 'Fixture AI summary sentence.', model: 'fixture', created_at: new Date().toISOString()} : null}; }
+    m = path.match(/^\/api\/articles\/([^/]+)\/comments\/$/);
+    if (m && method === 'POST') { const d = JSON.parse(bodyText || '{}'); if (!d.name || !d.body) return {error: 'Name and comment are required.'}; posted.push(d); return {message: d.parent ? 'Thank you. Your reply will appear after an editor approves it.' : 'Thank you. Your comment will appear after an editor approves it.', posted: posted.length}; }
+    if (m) return {results: m[1] === 'story-1' ? seedComments() : [], count: m[1] === 'story-1' ? 2 : 0};
     if (path === '/api/languages/') return {languages: [{code: 'en', name: 'English'}, {code: 'hi', name: 'Hindi'}], provider: 'fixture'};
     if (path === '/api/translate/' && method === 'POST') {
-      const lang = JSON.parse(bodyText || '{}').language;
-      return {source: 'en', language: lang, notice: 'Machine translation. Original English remains available.', texts: {'ui:home': 'होम', 'ui:blogs': 'सभी कहानियाँ', 'ui:latest': 'ताज़ा खबरें', 'ui:load_more': 'और खबरें ↓', 'article:1:title': 'कहानी 1: अनुवादित शीर्षक'}};
+      const req = JSON.parse(bodyText || '{}'), lang = req.language, extra = {}; for (const id of req.ids || []) extra[`article:${id}:title`] = `Translated story ${id}`;
+      return {source: 'en', language: lang, notice: 'Machine translation. Original English remains available.', texts: {'ui:home': 'होम', 'ui:blogs': 'सभी कहानियाँ', 'ui:latest': 'ताज़ा खबरें', 'ui:load_more': 'और खबरें ↓', 'article:1:title': 'कहानी 1: अनुवादित शीर्षक', ...extra}};
     }
     return undefined;
   };

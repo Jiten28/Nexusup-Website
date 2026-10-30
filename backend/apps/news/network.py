@@ -58,31 +58,31 @@ class SafeRedirect(HTTPRedirectHandler):
         return super().redirect_request(req,fp,code,msg,headers,newurl)
 
 
-def _fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None):
+def _fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None,timeout=8):
     validate_url(url)
     request_headers={'User-Agent':'NexusUpFeedReader/1.0 (+editorial RSS metadata only)','Accept':'application/rss+xml,application/atom+xml,application/json,text/xml;q=0.9'}
     request_headers.update(headers or {})
     if data is not None: request_headers['Content-Type']='application/json'
     req=Request(url,data=json.dumps(data).encode() if data is not None else None,headers=request_headers)
     # Do not inherit environment proxies that could bypass destination validation.
-    with build_opener(ProxyHandler({}),SafeRedirect(),PublicHTTPSHandler()).open(req,timeout=8) as response:
+    with build_opener(ProxyHandler({}),SafeRedirect(),PublicHTTPSHandler()).open(req,timeout=timeout) as response:
         body=response.read(max_bytes+1)
         if len(body)>max_bytes: raise ValueError('Response exceeded size limit.')
         return body
 
 
-def fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None):
+def fetch_bytes(url,data=None,max_bytes=2_000_000,headers=None,timeout=8):
     # Bounded retries for transient GET failures only. Respect provider rate limiting;
     # HTTP 429 is not retried here and the source interval remains in force.
     import time
     from urllib.error import HTTPError, URLError
     for attempt in range(3):
-        try: return _fetch_bytes(url,data=data,max_bytes=max_bytes,headers=headers)
+        try: return _fetch_bytes(url,data=data,max_bytes=max_bytes,headers=headers,timeout=timeout)
         except HTTPError as exc:
             if data is not None or exc.code not in (502,503,504) or attempt==2: raise
         except (URLError,TimeoutError,OSError):
             if data is not None or attempt==2: raise
         time.sleep(2**attempt)
 
-def fetch_json(url,data=None,headers=None):
-    return json.loads(fetch_bytes(url,data=data,headers=headers))
+def fetch_json(url,data=None,headers=None,timeout=8):
+    return json.loads(fetch_bytes(url,data=data,headers=headers,timeout=timeout))

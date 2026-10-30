@@ -91,10 +91,26 @@ if not DEBUG:
 NEWS_FETCH_ENABLED = os.getenv('NEWS_FETCH_ENABLED','0') == '1'
 UTILITIES_NETWORK_ENABLED = os.getenv('UTILITIES_NETWORK_ENABLED','0') == '1'
 OPEN_METEO_API_KEY = os.getenv('OPEN_METEO_API_KEY','')
+# Weather: openmeteo (default, no key) or openweathermap (set OPENWEATHER_API_KEY in backend/.env; never in the frontend).
+WEATHER_PROVIDER = os.getenv('WEATHER_PROVIDER','openweathermap' if os.getenv('OPENWEATHER_API_KEY') else 'openmeteo').strip().lower()
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY','')
+# Translation: disabled | libre (self-hosted, unlimited) | mymemory (free hosted, daily quota) | google (paid).
+MYMEMORY_EMAIL = os.getenv('MYMEMORY_EMAIL','')  # optional: raises the free daily allowance
 TRANSLATION_PROVIDER = os.getenv('TRANSLATION_PROVIDER','disabled')
 TRANSLATION_API_KEY = os.getenv('TRANSLATION_API_KEY','')
 LIBRETRANSLATE_URL = os.getenv('LIBRETRANSLATE_URL','http://127.0.0.1:5000').rstrip('/')
 TRANSLATION_TIMEOUT = env_int('TRANSLATION_TIMEOUT',15,1,60)
+
+# Story enrichment: AI summaries and optional full-page reading. Everything is off unless configured.
+# AI_SUMMARY_PROVIDER: disabled | claude | ollama. Keys live only in backend/.env, never in the frontend or logs.
+AI_SUMMARY_PROVIDER = os.getenv('AI_SUMMARY_PROVIDER','disabled').strip().lower()
+ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY','')
+AI_SUMMARY_MODEL = os.getenv('AI_SUMMARY_MODEL','claude-haiku-5-5' if AI_SUMMARY_PROVIDER == 'claude' else 'llama3.2:3b')
+OLLAMA_URL = os.getenv('OLLAMA_URL','http://127.0.0.1:11434').rstrip('/')
+AI_SUMMARY_TIMEOUT = env_int('AI_SUMMARY_TIMEOUT',45,5,180)
+AI_SUMMARY_AFTER_FETCH = os.getenv('AI_SUMMARY_AFTER_FETCH','0') == '1'
+AI_SUMMARY_BATCH = env_int('AI_SUMMARY_BATCH',10,1,50)
+FULLTEXT_DELAY_SECONDS = env_int('FULLTEXT_DELAY_SECONDS',2,0,30)
 
 # Portable origin, storage, database TLS and health settings.
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173' if DEBUG else SITE_URL).rstrip('/')

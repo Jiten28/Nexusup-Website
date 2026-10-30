@@ -400,3 +400,22 @@ dialog{border-radius:var(--radius);box-shadow:var(--shadow-lg);border-color:var(
 
 @media(max-width:700px){.nav-row nav{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-md)}.nav-row nav a{color:var(--text)}.nav-row nav a:after{background:var(--accent)}.mode-switch button{padding-inline:9px}}
 @media(prefers-reduced-motion:reduce){.story-card,.story-card img,button{transition:none!important}.story-card:hover,.story-card:hover img,button:hover{transform:none!important}}
+
+/* Conversation (comments + replies) and AI summary */
+.conversation{max-width:760px;margin:48px auto 0;padding-top:28px;border-top:1px solid var(--line)}
+.conversation-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.conversation h2{margin:0;font-size:26px}.conversation .count{font:600 14px Arial,sans-serif;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:3px 10px;vertical-align:middle}
+.composer,.comment{display:flex;gap:12px;align-items:flex-start}
+.composer{margin:18px 0 26px}.composer-fields{flex:1;display:grid;gap:8px;min-width:0}.composer textarea{resize:vertical;width:100%}.composer input{width:100%}
+.composer-actions{display:flex;gap:10px;align-items:center;justify-content:flex-end}.composer-actions small{margin-right:auto}
+.composer-note{margin:0;font-size:14px;color:var(--muted)}.composer-note.bad{color:#b3261e}
+.avatar{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:700 13px Arial,sans-serif}.avatar-editor{background:var(--accent);color:var(--surface)}
+.comment-list{list-style:none;margin:0;padding:0;display:grid;gap:22px}.comment-list.replies{margin-top:14px;gap:16px;padding-left:2px}
+.comment-main{flex:1;min-width:0}.comment-head{margin:0 0 4px;font-size:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.comment-head time{color:var(--muted);font-size:13px}
+.comment-body{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
+.badge{font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:.6px;background:var(--accent);color:var(--surface);border-radius:4px;padding:2px 6px}
+button.link{border:0;background:none;min-height:36px;padding:4px 2px;color:var(--accent);font-weight:700;cursor:pointer}.replies-toggle{display:block}
+button.ghost{background:none}.comment-reply .avatar{width:30px;height:30px;font-size:11px}.composer-reply{margin:10px 0 4px}
+.conversation-empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
+.ai-summary{max-width:700px;margin:26px auto;padding:16px 18px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;background:var(--accent-soft)}
+.ai-summary p{margin:6px 0}.ai-label{font:700 12px Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)}
